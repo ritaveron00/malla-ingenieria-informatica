@@ -4,25 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Plan de Estudio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>Plan de Estudio - Ingeniería en Informática</h1>
-
-  <div class="tabla-container">
-    <div class="fila encabezado">
-      <div class="col">Año</div>
-      <div class="col">Materia</div>
-      <div class="col">Nota 1</div>
-      <div class="col">Nota 2</div>
-      <div class="col">Final</div>
-      <div class="col">Fecha de Cierre</div>
-      <div class="col">Nota Final</div>
-    </div>
-    <!-- Las filas de materias se cargan con JavaScript -->
-  </div>
-
+  <table id="plan-estudio">
+    <thead>
+      <tr>
+        <th>Año</th>
+        <th>Materia</th>
+        <th>Nota 1</th>
+        <th>Nota 2</th>
+        <th>Final</th>
+        <th>Fecha de cierre</th>
+        <th>Nota final</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-contenido">
+      <!-- Contenido generado por JS -->
+    </tbody>
+  </table>
   <script src="script.js"></script>
 </body>
 </html>
+
