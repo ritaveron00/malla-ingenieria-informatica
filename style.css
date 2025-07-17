@@ -1,46 +1,54 @@
-/* Tipografía y fondo */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f0f4f8;
-  margin: 0;
-  padding: 20px;
-  color: #333;
+/* Colores base */
+:root {
+  --color-1: #8A724C;
+  --color-2: #B99668;
+  --color-3: #DCC9A7;
+  --color-4: #EDE2CC;
+  --color-5: #F7F3E8;
+  --texto: #4b3e2e;
+  --verde-aprobado: #a3d9a5;
 }
 
-/* Título principal */
+/* Fondo y tipografía */
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: var(--color-5);
+  margin: 0;
+  padding: 20px;
+  color: var(--texto);
+}
+
+/* Título */
 h1 {
   text-align: center;
-  color: #2c3e50;
+  color: var(--color-1);
   margin-bottom: 30px;
 }
 
-/* Contenedor general */
+/* Contenedor principal */
 .malla {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: row;
+  overflow-x: auto;
   gap: 20px;
+  padding-bottom: 20px;
 }
 
-/* Cada columna de año */
+/* Cada año */
 .anio {
-  background-color: #ffffff;
-  border: 2px solid #d0dce5;
+  background-color: var(--color-4);
+  border: 1px solid var(--color-3);
   border-radius: 15px;
   padding: 15px;
-  width: 220px;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
-}
-
-.anio:hover {
-  transform: scale(1.02);
+  min-width: 220px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .anio h2 {
   text-align: center;
-  color: #34495e;
-  font-size: 1.2em;
+  color: var(--color-2);
+  font-size: 1.1em;
   margin-bottom: 10px;
 }
 
@@ -48,25 +56,33 @@ h1 {
 .anio ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .materia {
-  background-color: #e6ecf3;
-  margin: 5px 0;
-  padding: 8px 10px;
+  background-color: var(--color-5);
+  border-left: 5px solid transparent;
+  margin: 6px 0;
+  padding: 10px 12px;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  font-size: 0.95em;
 }
 
+/* Hover y subrayado */
 .materia:hover {
-  background-color: #d0e0f0;
+  background-color: var(--color-3);
+  text-decoration: underline;
 }
 
+/* Materia aprobada */
 .materia.aprobada {
-  background-color: #a3d9a5;
+  background-color: var(--verde-aprobado);
   color: #1b512d;
-  text-decoration: line-through;
   font-weight: bold;
+  text-decoration: underline;
 }
+
 
