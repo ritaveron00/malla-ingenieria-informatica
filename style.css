@@ -1,1 +1,72 @@
+/* Tipografía y fondo */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f4f8;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+/* Título principal */
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
+
+/* Contenedor general */
+.malla {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Cada columna de año */
+.anio {
+  background-color: #ffffff;
+  border: 2px solid #d0dce5;
+  border-radius: 15px;
+  padding: 15px;
+  width: 220px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.anio:hover {
+  transform: scale(1.02);
+}
+
+.anio h2 {
+  text-align: center;
+  color: #34495e;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+/* Lista de materias */
+.anio ul {
+  list-style: none;
+  padding: 0;
+}
+
+.materia {
+  background-color: #e6ecf3;
+  margin: 5px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.materia:hover {
+  background-color: #d0e0f0;
+}
+
+.materia.aprobada {
+  background-color: #a3d9a5;
+  color: #1b512d;
+  text-decoration: line-through;
+  font-weight: bold;
+}
 
