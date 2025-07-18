@@ -77,6 +77,73 @@ const moodEmojis = [
     { emoji: '😟', class: 'animate-worried' }
 ];
 
+// Creamos una única burbuja de mood que se reutilizará
+const globalMoodBubble = document.createElement("div");
+globalMoodBubble.classList.add("mood-bubble");
+document.body.appendChild(globalMoodBubble); // Añadirla al body para que esté fuera del flujo de la tabla
+
+// Populate global mood bubble with emoji options
+moodEmojis.forEach(mood => {
+    const emojiOption = document.createElement("span");
+    emojiOption.textContent = mood.emoji;
+    emojiOption.classList.add("emoji-option");
+    emojiOption.dataset.emoji = mood.emoji; // Store emoji value
+    emojiOption.dataset.animationClass = mood.class; // Store animation class
+    globalMoodBubble.appendChild(emojiOption);
+});
+
+// Variable para almacenar el trigger activo (el botón que abrió la burbuja)
+let currentMoodTrigger = null;
+
+// Handle click on emoji options inside the global bubble
+globalMoodBubble.querySelectorAll('.emoji-option').forEach(emojiOption => {
+    emojiOption.addEventListener("click", (event) => {
+        event.stopPropagation(); // Prevent clicks from closing the bubble immediately
+
+        if (currentMoodTrigger) {
+            // Set the selected emoji on the trigger
+            currentMoodTrigger.textContent = emojiOption.textContent;
+            currentMoodTrigger.classList.add("selected-emoji");
+            currentMoodTrigger.classList.remove("text-button");
+
+            // Apply selected emoji's animation
+            moodEmojis.forEach(m => currentMoodTrigger.classList.remove(m.class));
+            currentMoodTrigger.classList.add(emojiOption.dataset.animationClass);
+            currentMoodTrigger.addEventListener('animationend', () => {
+                currentMoodTrigger.classList.remove(emojiOption.dataset.animationClass);
+            }, { once: true });
+
+            // Get materia name from the row of the currentMoodTrigger
+            const row = currentMoodTrigger.closest('tr');
+            const materiaNombre = row ? row.dataset.materiaNombre : null;
+
+            if (materiaNombre) {
+                // Save the selected mood in localStorage
+                const savedData = JSON.parse(localStorage.getItem(materiaNombre)) || {};
+                savedData.mood = emojiOption.textContent;
+                localStorage.setItem(materiaNombre, JSON.stringify(savedData));
+            }
+        }
+        
+        // Hide the bubble and reset current trigger
+        globalMoodBubble.classList.remove("active");
+        currentMoodTrigger = null;
+    });
+});
+
+// Close bubble if clicked outside anywhere on the document
+document.addEventListener("click", (event) => {
+    // Check if the click was NOT inside the bubble and NOT on any mood trigger
+    const isClickInsideBubble = globalMoodBubble.contains(event.target);
+    const isClickOnMoodTrigger = event.target.classList.contains('mood-trigger');
+
+    if (!isClickInsideBubble && !isClickOnMoodTrigger) {
+        globalMoodBubble.classList.remove("active");
+        currentMoodTrigger = null;
+    }
+});
+
+
 for (const anio in agrupadoPorAnio) {
   const seccion = document.createElement("div");
   seccion.className = "anio";
@@ -119,75 +186,58 @@ for (const anio in agrupadoPorAnio) {
     const tdFecha = document.createElement("td");
     const tdFinal = document.createElement("td");
 
-    // --- Columna del Mood (Botón y Burbuja) ---
+    // --- Columna del Mood (Botón) ---
     const tdMood = document.createElement("td");
-    tdMood.classList.add("mood-container"); // Container for positioning
+    tdMood.classList.add("mood-container"); // Container for centering the button
 
     const moodTrigger = document.createElement("div");
     moodTrigger.classList.add("mood-trigger");
     moodTrigger.textContent = "⚙️"; // Default icon or text for the button
-
-    const moodBubble = document.createElement("div");
-    moodBubble.classList.add("mood-bubble");
-
-    // Populate mood bubble with emoji options
-    moodEmojis.forEach(mood => {
-        const emojiOption = document.createElement("span");
-        emojiOption.textContent = mood.emoji;
-        emojiOption.classList.add("emoji-option");
-        emojiOption.dataset.emoji = mood.emoji; // Store emoji value
-        emojiOption.dataset.animationClass = mood.class; // Store animation class
-
-        emojiOption.addEventListener("click", (event) => {
-            event.stopPropagation(); // Prevent moodTrigger click from firing again
-
-            // Set the selected emoji on the trigger
-            moodTrigger.textContent = emojiOption.textContent;
-            moodTrigger.classList.add("selected-emoji"); // Style as selected emoji
-            moodTrigger.classList.remove("text-button"); // Remove text style if any
-
-            // Apply selected emoji's animation
-            // First, remove any previous animations
-            moodEmojis.forEach(m => moodTrigger.classList.remove(m.class));
-            moodTrigger.classList.add(emojiOption.dataset.animationClass);
-            moodTrigger.addEventListener('animationend', () => {
-                moodTrigger.classList.remove(emojiOption.dataset.animationClass);
-            }, { once: true });
-
-            // Hide the bubble
-            moodBubble.classList.remove("active");
-
-            // Save the selected mood in localStorage
-            const savedData = JSON.parse(localStorage.getItem(materia.nombre)) || {};
-            savedData.mood = emojiOption.textContent;
-            localStorage.setItem(materia.nombre, JSON.stringify(savedData));
-        });
-        moodBubble.appendChild(emojiOption);
-    });
-
+    
     // Event listener to toggle the mood bubble
     moodTrigger.addEventListener("click", (event) => {
-        event.stopPropagation(); // Prevent clicks from closing other bubbles
+        event.stopPropagation(); // Prevent document click from closing it
 
-        // Close any other open bubbles first
-        document.querySelectorAll('.mood-bubble.active').forEach(openBubble => {
-            if (openBubble !== moodBubble) { // Don't close self
-                openBubble.classList.remove('active');
-            }
-        });
-        
-        moodBubble.classList.toggle("active");
-    });
-
-    // Close bubble if clicked outside
-    document.addEventListener("click", (event) => {
-        if (!moodBubble.contains(event.target) && !moodTrigger.contains(event.target)) {
-            moodBubble.classList.remove("active");
+        // If this trigger already opened the bubble, just close it
+        if (currentMoodTrigger === moodTrigger && globalMoodBubble.classList.contains("active")) {
+            globalMoodBubble.classList.remove("active");
+            currentMoodTrigger = null;
+            return;
         }
+
+        // Close any other open bubbles
+        document.querySelectorAll('.mood-bubble.active').forEach(openBubble => {
+            openBubble.classList.remove('active');
+        });
+
+        // Set the current active trigger
+        currentMoodTrigger = moodTrigger;
+
+        // Position the bubble relative to the clicked trigger
+        const rect = moodTrigger.getBoundingClientRect();
+        globalMoodBubble.style.left = `${rect.left + rect.width / 2}px`; // Center horizontally
+        globalMoodBubble.style.top = `${rect.top}px`; // Align with the top of the trigger
+        globalMoodBubble.style.transform = `translate(-50%, -110%)`; // Move up and center-align
+        
+        // Handle edge case for the last column to prevent bubble from going off screen
+        const tableRect = tabla.getBoundingClientRect();
+        const bubbleWidth = globalMoodBubble.offsetWidth;
+        if ((rect.left + rect.width / 2 + bubbleWidth / 2) > tableRect.right) {
+            // If it goes off right, align right edge of bubble with right edge of table
+            globalMoodBubble.style.left = `${tableRect.right}px`;
+            globalMoodBubble.style.transform = `translate(-100%, -110%)`; // Align right and move up
+        } else if ((rect.left + rect.width / 2 - bubbleWidth / 2) < tableRect.left) {
+             // If it goes off left, align left edge of bubble with left edge of table
+            globalMoodBubble.style.left = `${tableRect.left}px`;
+            globalMoodBubble.style.transform = `translate(0, -110%)`; // Align left and move up
+        }
+
+
+        // Show the bubble
+        globalMoodBubble.classList.add("active");
     });
 
     tdMood.appendChild(moodTrigger);
-    tdMood.appendChild(moodBubble);
     // --- Fin Columna del Mood ---
 
 
@@ -267,7 +317,6 @@ for (const anio in agrupadoPorAnio) {
       dataToSave.estado = tdEstado.textContent;
       dataToSave.notaFinal = tdFinal.textContent;
       dataToSave.fechaCierre = tdFecha.textContent;
-      // Mood is saved separately on emoji click
       localStorage.setItem(materia.nombre, JSON.stringify(dataToSave));
       
       updateProgressBar(); // Actualizar la barra de progreso
