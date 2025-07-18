@@ -22,13 +22,13 @@ body {
   min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la vista */
 }
 
-/* Título principal - Centrado y con nueva fuente */
+/* Título principal - Clara, delicada y con estilo de título */
 h1 {
   text-align: center;
   margin: 30px auto; /* Centrado horizontal */
-  font-family: 'Cormorant Garamond', serif; /* Nueva fuente para el título principal */
-  font-weight: 600; /* Un poco más de peso para que destaque */
-  font-size: 3.5em; /* Tamaño grande para que destaque como título */
+  font-family: 'Dancing Script', cursive; /* Nueva fuente: Dancing Script */
+  font-weight: 700; /* Un poco más de peso para que destaque */
+  font-size: 3.8em; /* Tamaño grande para que destaque como título */
   color: var(--color-1);
   line-height: 1.2;
   max-width: 800px;
@@ -57,7 +57,8 @@ h1 {
 /* Títulos de Año - Nueva fuente */
 .anio h2 {
   margin: 0 0 10px;
-  font-family: 'Crimson Text', serif; /* Nueva fuente para el año */
+  font-family: 'Dancing Script', cursive; /* Nueva fuente: Dancing Script */
+  font-weight: 700; /* Un poco más de peso para que destaque */
   font-size: 2.3em;
   color: var(--color-1);
   border-bottom: 2px solid var(--color-2);
@@ -67,7 +68,7 @@ h1 {
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: fixed; /* Mantiene el ancho de columnas fijo */
 }
 
 th, td {
@@ -146,7 +147,7 @@ input[type='text'] {
   padding: 6px;
   border: 1px solid var(--color-3);
   border-radius: 6px;
-  background-color: white; /* El input sí necesita fondo blanco para ser legible */
+  background-color: transparent; /* CAMBIO: Fondo transparente para el input de notas */
   box-sizing: border-box;
   display: block;
   margin: 0 auto;
@@ -187,7 +188,7 @@ input[type='text']:focus {
   }
 
   h1 {
-    font-size: 2.5em; /* Ajuste para que se vea bien en móvil */
+    font-size: 2.8em; /* Ajuste para que se vea bien en móvil */
     margin: 15px auto;
     max-width: 100%;
   }
@@ -207,7 +208,7 @@ input[type='text']:focus {
   .anio h2 {
     padding: 16px 16px 5px;
     margin-bottom: 10px;
-    font-size: 1.8em; /* Ajuste para el año en móvil */
+    font-size: 1.9em; /* Ajuste para el año en móvil */
   }
 
   table {
