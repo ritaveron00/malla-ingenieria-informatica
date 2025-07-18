@@ -17,20 +17,22 @@ body {
   padding: 0;
   color: var(--color-1);
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* Cambiado para permitir que el h1 se centre correctamente */
+  align-items: center; /* Centra el contenido horizontalmente */
+  min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la vista */
 }
 
-/* Título principal - Clara, delicada y con estilo de título */
+/* Título principal - Centrado y con nueva fuente */
 h1 {
   text-align: center;
-  margin: 30px auto;
-  font-family: 'Parisienne', cursive; /* Fuente para el título principal */
-  font-weight: 400;
-  font-size: 3.8em; /* Tamaño grande para que destaque como título */
+  margin: 30px auto; /* Centrado horizontal */
+  font-family: 'Cormorant Garamond', serif; /* Nueva fuente para el título principal */
+  font-weight: 600; /* Un poco más de peso para que destaque */
+  font-size: 3.5em; /* Tamaño grande para que destaque como título */
   color: var(--color-1);
   line-height: 1.2;
   max-width: 800px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Ligera sombra para darle más profundidad */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 .contenedor-principal {
@@ -38,6 +40,7 @@ h1 {
   width: 95%;
   padding: 20px;
   box-sizing: border-box;
+  flex-grow: 1; /* Permite que el contenedor principal ocupe el espacio restante */
 }
 
 .anio {
@@ -51,11 +54,11 @@ h1 {
   box-shadow: none;
 }
 
-/* Títulos de Año - Clara y delicada */
+/* Títulos de Año - Nueva fuente */
 .anio h2 {
   margin: 0 0 10px;
-  font-family: 'Parisienne', cursive; /* Fuente para el año */
-  font-size: 2.3em; /* Ajustado para que combine bien */
+  font-family: 'Crimson Text', serif; /* Nueva fuente para el año */
+  font-size: 2.3em;
   color: var(--color-1);
   border-bottom: 2px solid var(--color-2);
   padding-bottom: 5px;
@@ -64,58 +67,78 @@ h1 {
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Mantiene el ancho de columnas fijo */
+  table-layout: fixed;
 }
 
 th, td {
-  border-right: 1px solid var(--color-3);
-  border-bottom: 1px solid var(--color-3);
-  word-wrap: normal; /* Asegura que el texto no se rompa de forma inesperada */
-  white-space: normal; /* Permitir que el texto se envuelva en múltiples líneas */
-  overflow: hidden; /* Oculta cualquier contenido que se desborde sin cortarlo en medio de la palabra */
-  text-overflow: clip; /* Asegura que el texto no tenga elipses si se oculta */
+  border: 1px solid var(--color-3); /* Solo bordes */
+  border-left: none; /* Quitamos borde izquierdo */
+  border-top: none; /* Quitamos borde superior */
+  word-wrap: normal;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: clip;
   text-align: center;
   vertical-align: middle;
+  background-color: transparent; /* Fondo transparente para todas las celdas */
 }
 
-th:last-child, td:last-child {
-  border-right: none;
+/* Ajustes de bordes para una apariencia más limpia */
+th:first-child, td:first-child {
+  border-left: 1px solid var(--color-3); /* Mantenemos el borde izquierdo de la primera columna */
 }
 
-tr:last-child td {
-  border-bottom: none;
+th:first-child {
+  border-top: 1px solid var(--color-3); /* Mantenemos el borde superior de la primera celda del thead */
 }
 
-/* Encabezados de Columna */
 th {
   background-color: var(--color-2);
   color: white;
-  text-align: center;
   padding: 8px;
   font-family: 'Quicksand', sans-serif;
   font-weight: 600;
-  font-size: 0.9em; /* Ajuste a un tamaño que combine con el resto */
+  font-size: 0.9em;
+  /* Bordes específicos para los th para que se vean unidos y definidos */
+  border-left: 1px solid var(--color-3);
+  border-right: 1px solid var(--color-3);
+  border-top: 1px solid var(--color-3);
+  border-bottom: 1px solid var(--color-3);
 }
 
+/* Redondeo de bordes para la tabla */
+table {
+    border-radius: 8px; /* Redondea las esquinas de la tabla */
+    overflow: hidden; /* Asegura que el contenido se recorte si sobresale de los bordes redondeados */
+    border: 1px solid var(--color-3); /* Borde exterior para la tabla */
+}
+
+/* Para quitar bordes dobles */
+table th, table td {
+    border-top: none;
+    border-left: none;
+}
+
+table tr:first-child th {
+    border-top: 1px solid var(--color-3);
+}
+
+table tr td:first-child {
+    border-left: 1px solid var(--color-3);
+}
+
+/* Nombres de Materia y Contenido de las demás columnas con el mismo tamaño */
 td {
-  background-color: var(--color-5);
-  padding: 8px;
-}
-
-/* Nombres de Materia - Ajuste fino para evitar cortes y tamaño óptimo */
-td:first-child { /* Esta es la columna 'Materia' */
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 500;
-  font-size: 0.95em;
-  /* Ajustamos el ancho de la primera columna para dar más espacio a las materias */
-  width: 30%; /* Mantenemos el 30% del ancho total de la tabla */
-  line-height: 1.3; /* Mejoramos el espaciado si el texto se envuelve */
-}
-
-/* Contenido de las demás columnas (Notas Parciales, Final, Fecha de Cierre, Nota Final) */
-td:not(:first-child) {
   font-family: 'Open Sans', sans-serif;
-  font-size: 0.88em; /* Ligeramente más pequeño para el contenido de datos */
+  font-size: 0.95em; /* Mismo tamaño que la materia para todos los datos */
+  line-height: 1.3;
+}
+
+/* Estilo específico para la columna de Materia (primer td) */
+td:first-child {
+  font-family: 'Quicksand', sans-serif; /* Usamos Quicksand para el nombre de la materia */
+  font-weight: 500;
+  width: 30%;
 }
 
 input[type='text'] {
@@ -123,12 +146,13 @@ input[type='text'] {
   padding: 6px;
   border: 1px solid var(--color-3);
   border-radius: 6px;
-  background-color: white;
+  background-color: white; /* El input sí necesita fondo blanco para ser legible */
   box-sizing: border-box;
   display: block;
   margin: 0 auto;
   font-family: 'Open Sans', sans-serif;
-  font-size: 0.88em; /* Coincide con el contenido de datos */
+  font-size: 0.95em; /* Mismo tamaño que los datos de las celdas */
+  text-align: center; /* Centrar el texto dentro del input */
 }
 
 input[type='text']:focus {
@@ -139,8 +163,8 @@ input[type='text']:focus {
 
 .estado {
   font-weight: bold;
-  font-size: 0.8em; /* Reducimos el tamaño de "Promocionada" / "Obligatoria" */
-  line-height: 1.2; /* Mejoramos el espaciado si el texto se envuelve */
+  font-size: 0.8em;
+  line-height: 1.2;
 }
 
 .promocionada {
@@ -152,7 +176,7 @@ input[type='text']:focus {
 }
 
 .td-materia-promocionada {
-  background-color: var(--color-aprobada-fondo);
+  background-color: var(--color-aprobada-fondo); /* Este fondo sí se mantiene */
   font-weight: bold;
 }
 
@@ -162,9 +186,8 @@ input[type='text']:focus {
     padding: 0 5px;
   }
 
-  /* Ajuste para el título en móvil */
   h1 {
-    font-size: 2.8em; /* Ajuste para que se vea bien en móvil */
+    font-size: 2.5em; /* Ajuste para que se vea bien en móvil */
     margin: 15px auto;
     max-width: 100%;
   }
@@ -184,38 +207,37 @@ input[type='text']:focus {
   .anio h2 {
     padding: 16px 16px 5px;
     margin-bottom: 10px;
-    font-size: 1.9em; /* Ajuste para el año en móvil */
+    font-size: 1.8em; /* Ajuste para el año en móvil */
   }
 
   table {
-    min-width: 580px; /* Mantenemos el min-width */
+    min-width: 580px;
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
     display: table;
+    border-radius: 8px; /* Mantener redondeo en móvil */
   }
 
   th, td {
     padding: 8px 4px;
-    font-size: 0.7em; /* Reducimos un poco más el tamaño de fuente en móvil para todas las celdas */
+    font-size: 0.85em; /* Ajuste de tamaño de fuente general para celdas en móvil */
     white-space: normal;
     box-sizing: border-box;
   }
 
-  /* Ajustamos tamaño de fuente específico para Materia en móvil */
   td:first-child {
-      font-size: 0.85em; /* Materia ligeramente más grande que el resto del contenido en móvil */
+      font-size: 0.9em; /* Materia ligeramente más grande que el resto del contenido en móvil */
   }
   
-  /* Ajustamos tamaño de Promocionada/Obligatoria en móvil */
   .estado {
-    font-size: 0.7em; /* Coincide con el tamaño de celda en móvil */
+    font-size: 0.75em; /* Tamaño para Promocionada/Obligatoria en móvil */
   }
 
   input[type='text'] {
     width: 95%;
     padding: 5px;
-    font-size: 0.7em; /* Coincide con el tamaño de celda en móvil */
+    font-size: 0.85em; /* Coincide con el tamaño de celda en móvil */
   }
 
   th, td {
