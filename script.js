@@ -93,18 +93,21 @@ for (const anio in agrupadoPorAnio) {
       const data = JSON.parse(savedData);
       inputNotas.value = data.notas || "";
 
-      // NUEVO: Rellenar directamente los td con la información guardada
       tdEstado.textContent = data.estado || "";
       tdFinal.textContent = data.notaFinal || "";
       tdFecha.textContent = data.fechaCierre || "";
 
-      // Reaplicar las clases de estado y resaltado si existen en los datos guardados
-      // Esto es crucial para que los estilos se vean al cargar
+      // Reaplicar las clases de estado
       if (data.estado === "Promocionada") {
         tdEstado.classList.add("promocionada");
-        tdNombre.classList.add("td-materia-promocionada");
       } else if (data.estado === "Obligatoria") {
         tdEstado.classList.add("obligatoria");
+      }
+
+      // NUEVO: Reaplicar clase de resaltado de materia si el promedio cumple la condición
+      const loadedPromedio = parseFloat(data.notaFinal);
+      if (loadedPromedio >= 4 && loadedPromedio <= 10) {
+          tdNombre.classList.add("td-materia-promocionada");
       }
     }
     // --- Fin de carga de datos ---
@@ -144,8 +147,8 @@ for (const anio in agrupadoPorAnio) {
         tdEstado.textContent = isPromocionada ? "Promocionada" : "Obligatoria";
         tdEstado.classList.add(isPromocionada ? "promocionada" : "obligatoria");
 
-        // Lógica para pintar SOLO la celda de "Materia" si está promocionada
-        if (isPromocionada) {
+        // NUEVO: Lógica para pintar SOLO la celda de "Materia" si el promedio está entre 4 y 10
+        if (promedio >= 4 && promedio <= 10) {
           tdNombre.classList.add("td-materia-promocionada");
         }
       } else {
@@ -178,7 +181,6 @@ for (const anio in agrupadoPorAnio) {
   seccion.appendChild(tabla);
   contenedor.appendChild(seccion);
 }
-
 
 
 
