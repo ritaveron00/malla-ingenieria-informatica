@@ -24,7 +24,7 @@ body {
 h1 {
   text-align: center;
   margin: 30px auto;
-  font-family: 'Parisienne', cursive; /* ¡Nueva fuente para el título principal! */
+  font-family: 'Parisienne', cursive; /* Fuente para el título principal */
   font-weight: 400;
   font-size: 3.8em; /* Tamaño grande para que destaque como título */
   color: var(--color-1);
@@ -54,7 +54,7 @@ h1 {
 /* Títulos de Año - Clara y delicada */
 .anio h2 {
   margin: 0 0 10px;
-  font-family: 'Parisienne', cursive; /* Fuente para el año (se mantiene igual) */
+  font-family: 'Parisienne', cursive; /* Fuente para el año */
   font-size: 2.3em; /* Ajustado para que combine bien */
   color: var(--color-1);
   border-bottom: 2px solid var(--color-2);
@@ -144,7 +144,7 @@ input[type='text']:focus {
 }
 
 .promocionada {
-  color: var(--color-1);
+  color: var(--color-2); /* Mismo color que 'obligatoria' */
 }
 
 .obligatoria {
