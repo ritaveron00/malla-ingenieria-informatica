@@ -7,7 +7,6 @@
 
   --color-aprobada-fondo: var(--color-4); /* Fondo para la materia aprobada (columna Materia) */
   --color-borde-foco: var(--color-2); /* Color del borde al seleccionar el input */
-  /* Eliminamos --color-resaltado-promedio ya que solo se resalta la materia */
 }
 
 body {
@@ -33,7 +32,6 @@ h1 {
   width: 95%;
   padding: 20px;
   box-sizing: border-box;
-  /* Permitimos scroll horizontal solo para la tabla */
 }
 
 .anio {
@@ -41,6 +39,8 @@ h1 {
   background-color: var(--color-4);
   border-radius: 12px;
   padding: 16px;
+  /* El overflow-x ahora se aplica a un nuevo div dentro de .anio en el JS si es necesario,
+     o se gestiona directamente en la tabla con un min-width */
 }
 
 .anio:hover {
@@ -56,9 +56,9 @@ h1 {
 }
 
 table {
-  width: 100%;
+  width: 100%; /* Aseguramos que la tabla ocupe el 100% del espacio disponible */
   border-collapse: collapse;
-  table-layout: fixed; /* Fuerza a las columnas a tener un ancho fijo */
+  table-layout: fixed; /* Esto es clave: fuerza a las columnas a tener el mismo ancho */
 }
 
 th, td {
@@ -120,59 +120,58 @@ input[type='text']:focus {
 }
 
 /* Estilo para la celda de "Materia" cuando está promocionada */
-.td-materia-promocionada { /* Nueva clase para el resaltado de la celda de materia */
+.td-materia-promocionada {
   background-color: var(--color-aprobada-fondo); /* Fondo suave cuando está aprobada */
   font-weight: bold;
 }
 
-/* Eliminamos la clase .resaltado-promedio ya que solo se resalta la materia */
-
-
-/* Responsive (manteniendo la tabla como columnas con scroll horizontal si es necesario) */
+/* Responsive (Manteniendo las columnas y el scroll horizontal, pero mejorando el contenedor) */
 @media screen and (max-width: 600px) {
   body {
-    padding: 0 5px; /* Reducimos el padding general para más espacio */
+    padding: 0 5px;
   }
 
   .contenedor-principal {
-    width: 100%; /* El contenedor ocupa todo el ancho disponible */
-    padding: 10px; /* Reducimos el padding del contenedor */
+    width: 100%;
+    padding: 10px;
     box-sizing: border-box;
-    /* Movemos el overflow-x a la tabla misma o a un contenedor de la tabla
-       para que solo la tabla tenga scroll y no todo el principal */
   }
 
   .anio {
-    padding: 10px; /* Reducimos el padding de los contenedores de año */
+    padding: 0; /* Eliminamos el padding aquí para que el fondo se extienda al borde de las columnas */
+    overflow-x: auto; /* El scroll horizontal se aplica al .anio */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .anio h2 {
+    padding: 16px 16px 5px; /* Devolvemos el padding solo al título para que no se pegue al borde */
+    margin-bottom: 10px;
   }
 
   table {
-    min-width: 550px; /* Ancho mínimo para la tabla para que no se vea demasiado comprimida */
-    width: auto; /* La tabla puede crecer más allá del 100% */
-    display: block; /* La tabla se comporta como un bloque para permitir el scroll */
-    overflow-x: auto; /* Permite scroll horizontal en la tabla */
-    -webkit-overflow-scrolling: touch; /* Mejora el scroll en iOS */
+    min-width: 550px; /* Ancho mínimo para la tabla, si es menor, habrá scroll */
+    width: 100%; /* La tabla intenta ocupar el 100% del .anio con min-width */
+    border-collapse: collapse; /* Mantenemos el border-collapse */
+    table-layout: fixed; /* Mantenemos el table-layout: fixed */
+    display: table; /* Aseguramos que se comporte como tabla */
   }
 
   th, td {
-    padding: 8px 4px; /* Reducimos el padding de las celdas para que el contenido quepa mejor */
-    font-size: 0.85em; /* Reducimos un poco el tamaño de la fuente para que quepa más */
-    white-space: normal; /* Permitir que el texto se rompa en líneas si es necesario */
+    padding: 8px 4px; /* Reducimos el padding de las celdas */
+    font-size: 0.85em; /* Reducimos un poco el tamaño de la fuente */
+    white-space: normal; /* Permitir que el texto se rompa */
+    box-sizing: border-box; /* Aseguramos que el padding y borde no aumenten el ancho de la celda */
   }
 
   /* Aseguramos que los inputs se ajusten bien */
   input[type='text'] {
-    width: 95%; /* Un poco más de ancho para el input en móvil */
+    width: 95%;
     padding: 5px;
   }
 
-  /* Eliminamos las reglas de apilamiento */
-  table, thead, tbody, th, td, tr {
-    display: revert; /* Vuelve al comportamiento por defecto de la tabla */
-  }
-
-  td::before {
-    content: none; /* Eliminamos los labels que se mostraban al apilar */
+  /* Aseguramos que las cabeceras y celdas se comporten como tabla-cell */
+  th, td {
+      display: table-cell;
   }
 }
 
