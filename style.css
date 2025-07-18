@@ -145,8 +145,8 @@ td:first-child {
 }
 
 /* NEW: Styles for Mood Button and Bubble */
+/* mood-container inside td no longer needs position: relative */
 .mood-container {
-    position: relative; /* Needed for absolute positioning of the bubble */
     display: flex; /* To center content */
     justify-content: center;
     align-items: center;
@@ -191,9 +191,9 @@ td:first-child {
     box-shadow: none; /* No shadow */
 }
 
-
+/* The mood-bubble is now globally positioned */
 .mood-bubble {
-    position: absolute;
+    position: fixed; /* Position fixed relative to viewport */
     display: flex;
     flex-wrap: nowrap; /* Keep emojis in one line */
     background-color: rgba(255, 255, 255, 0); /* Transparent background */
@@ -201,44 +201,19 @@ td:first-child {
     border-radius: 6px; /* Rounded corners */
     padding: 5px;
     box-shadow: 0 0 5px rgba(185, 150, 104, 0.5); /* Shadow like input focus */
-    z-index: 10; /* Ensure it's above other elements */
+    z-index: 1000; /* Ensure it's above everything */
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px); /* Start slightly above */
     transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
-    top: 50%; /* Center vertically relative to trigger */
-    left: 50%; /* Center horizontally relative to trigger */
-    transform: translate(-50%, -50%); /* Adjust for perfect centering */
     pointer-events: none; /* Don't block clicks when hidden */
 }
-/* Adjustments for bubble positioning depending on screen size or table side */
-@media (min-width: 601px) { /* On larger screens, position bubble above/left if needed */
-    .mood-bubble {
-        transform: translate(-50%, -100%) translateY(-10px); /* Position above the trigger */
-    }
-    td:last-child .mood-bubble { /* If it's the last column, push left */
-        left: auto;
-        right: 0;
-        transform: translate(0, -100%) translateY(-10px);
-    }
-}
-
 
 .mood-bubble.active {
     opacity: 1;
     visibility: visible;
-    transform: translate(-50%, -50%); /* Return to centered position */
+    /* Position will be set by JS */
     pointer-events: all; /* Enable clicks */
 }
-@media (min-width: 601px) { /* On larger screens, position bubble above/left if needed */
-    .mood-bubble.active {
-        transform: translate(-50%, -100%) translateY(-10px); /* Position above the trigger */
-    }
-    td:last-child .mood-bubble.active { /* If it's the last column, push left */
-        transform: translate(0, -100%) translateY(-10px);
-    }
-}
-
 
 .mood-bubble .emoji-option {
     font-size: 1.8em; /* Emojis inside the bubble are a bit larger */
@@ -253,7 +228,6 @@ td:first-child {
 
 
 /* Animaciones para cada emoji */
-/* Enojado: Ceño fruncido / Enfado */
 @keyframes angry-frown {
     0%, 100% { transform: scale(1); }
     25% { transform: scale(0.95); }
@@ -262,7 +236,6 @@ td:first-child {
 }
 .mood-emoji.animate-angry { animation: angry-frown 0.4s ease-in-out; }
 
-/* Triste: Llanto / Llorando */
 @keyframes sad-cry {
     0%, 100% { transform: translateY(0); }
     25% { transform: translateY(2px) rotate(-1deg); }
@@ -271,7 +244,6 @@ td:first-child {
 }
 .mood-emoji.animate-sad { animation: sad-cry 0.6s ease-in-out; }
 
-/* Feliz: Sonriendo / Rebotando */
 @keyframes happy-bounce {
     0%, 100% { transform: translateY(0) scaleX(1); }
     25% { transform: translateY(-5px) scaleX(1.05); }
@@ -280,7 +252,6 @@ td:first-child {
 }
 .mood-emoji.animate-happy { animation: happy-bounce 0.5s ease-out; }
 
-/* Enamorado: Corazoncitos latiendo */
 @keyframes love-heartbeat {
     0%, 100% { transform: scale(1); }
     15% { transform: scale(1.2); }
@@ -290,7 +261,6 @@ td:first-child {
 }
 .mood-emoji.animate-love { animation: love-heartbeat 0.8s ease-in-out; }
 
-/* Preocupado: Temblor */
 @keyframes worried-tremble {
     0%, 100% { transform: translateX(0) translateY(0); }
     10% { transform: translateX(-1px) translateY(1px); }
@@ -420,13 +390,6 @@ input[type='text']:focus {
   th, td {
       display: table-cell;
   }
-
-    /* Adjust bubble positioning for mobile to be centered relative to trigger */
-    .mood-bubble.active {
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
 }
 
 
