@@ -90,36 +90,41 @@ for (const anio in agrupadoPorAnio) {
       const val = inputNotas.value.trim();
       const partes = val.split("-").map(n => parseFloat(n));
 
+      // Limpiar clases de resaltado y estado antes de aplicar nuevas
+      row.classList.remove("promocionada-row");
+      tdNombre.classList.remove("td-materia");
+      tdInput.classList.remove("resaltado-promedio");
+      tdFinal.classList.remove("resaltado-promedio");
+      tdEstado.className = "estado"; // Resetear la clase de estado
+
       if (partes.length === 2 && partes.every(n => !isNaN(n))) {
         const suma = partes[0] + partes[1];
         const promedio = (partes[0] + partes[1]) / 2;
 
         tdEstado.textContent = suma >= 14 ? "Promocionada" : "Obligatoria";
-        tdEstado.className = "estado " + (suma >= 14 ? "promocionada" : "obligatoria");
+        tdEstado.classList.add(suma >= 14 ? "promocionada" : "obligatoria"); // Usar add para no sobreescribir 'estado'
 
         tdFinal.textContent = promedio.toFixed(1);
 
         tdFecha.textContent = promedio >= 4 ? new Date().toLocaleDateString("es-AR") : "";
 
-        // --- INICIO DEL CÓDIGO CORREGIDO PARA PINTAR LA FILA DE MATERIA ---
+        // Lógica para pintar la celda de "Materia" si está promocionada
         if (suma >= 14) {
           row.classList.add("promocionada-row");
           tdNombre.classList.add("td-materia");
-        } else {
-          row.classList.remove("promocionada-row");
-          tdNombre.classList.remove("td-materia");
         }
-        // --- FIN DEL CÓDIGO CORREGIDO ---
+
+        // Lógica para resaltar celdas si el promedio está entre 4 y 10
+        if (promedio >= 4 && promedio <= 10) {
+          tdInput.classList.add("resaltado-promedio");
+          tdFinal.classList.add("resaltado-promedio");
+        }
 
       } else {
         tdEstado.textContent = "";
-        tdEstado.className = "estado";
         tdFecha.textContent = "";
         tdFinal.textContent = "";
-        // --- INICIO DEL CÓDIGO PARA REMOVER CLASES SI EL INPUT ESTÁ VACÍO O INVÁLIDO ---
-        row.classList.remove("promocionada-row");
-        tdNombre.classList.remove("td-materia");
-        // --- FIN DEL CÓDIGO ---
+        // Las clases de resaltado y estado ya se limpiaron al inicio del listener
       }
     });
 
