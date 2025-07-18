@@ -1,84 +1,133 @@
+:root {
+  --color-1: #8A724C;
+  --color-2: #B99668;
+  --color-3: #DCC9A7;
+  --color-4: #EDE2CC;
+  --color-5: #F7F3E8;
+}
+
 body {
-  font-family: 'Quicksand', sans-serif;
+  background-color: var(--color-5);
+  font-family: 'Segoe UI', sans-serif;
   margin: 0;
-  background-color: #F7F3E8;
-  color: #333;
+  padding: 0;
+  color: var(--color-1);
+  display: flex;
+  justify-content: center;
 }
 
 h1 {
   text-align: center;
-  padding: 20px 0;
-  color: #8A724C;
+  margin: 20px;
+  font-family: 'Georgia', serif;
+  font-weight: 400;
+  color: var(--color-1);
 }
 
-.malla-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.contenedor-principal {
+  max-width: 960px;
+  width: 95%;
   padding: 20px;
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-#malla {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: nowrap;
-  width: 100%;
 }
 
 .anio {
-  background-color: #EDE2CC;
+  margin-bottom: 40px;
+  background-color: var(--color-4);
   border-radius: 12px;
-  padding: 10px;
-  min-width: 230px;
-  flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .anio h2 {
-  text-align: center;
-  background-color: #B99668;
+  margin: 0 0 10px;
+  font-size: 1.2em;
+  color: var(--color-1);
+  border-bottom: 2px solid var(--color-2);
+  padding-bottom: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: var(--color-2);
   color: white;
-  margin: 0 0 10px 0;
+  text-align: left;
   padding: 8px;
-  border-radius: 8px;
-  font-size: 1.1rem;
+  font-weight: normal;
 }
 
-.materia {
-  background-color: #DCC9A7;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
+td {
+  background-color: var(--color-5);
+  padding: 8px;
+  vertical-align: middle;
 }
 
-.materia.seleccionada {
-  background-color: #B99668;
-  color: white;
-}
-
-.materia label {
-  font-weight: 600;
-}
-
-.materia input {
-  padding: 5px;
-  border: 1px solid #ccc;
+input[type='text'] {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid var(--color-3);
   border-radius: 6px;
-  font-size: 0.9rem;
+  background-color: white;
 }
 
-.materia .estado {
+.estado {
   font-weight: bold;
-  color: #8A724C;
+}
+
+.promocionada {
+  color: #4F7942; /* Verde musgo suave */
+}
+
+.obligatoria {
+  color: #AA5A44; /* Marrón rojizo */
+}
+
+tr:hover td {
+  background-color: var(--color-3);
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  body {
+    padding: 0 10px;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  th {
+    display: none;
+  }
+
+  td {
+    position: relative;
+    padding-left: 50%;
+    margin-bottom: 10px;
+  }
+
+  td::before {
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: bold;
+    color: var(--color-1);
+  }
+
+  td:nth-of-type(1)::before { content: "Materia"; }
+  td:nth-of-type(2)::before { content: "Notas Parciales"; }
+  td:nth-of-type(3)::before { content: "Final"; }
+  td:nth-of-type(4)::before { content: "Fecha de Cierre"; }
+  td:nth-of-type(5)::before { content: "Nota Final"; }
 }
 
 @media screen and (max-width: 768px) {
