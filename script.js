@@ -32,14 +32,15 @@ const materias = [
   { anio: "Cuarto Año", nombre: "Sistemas Distribuidos I" },
 
   { anio: "Quinto Año", nombre: "Taller de Seguridad Informática" },
-  { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
   { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
+  { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
 
 const contenedor = document.getElementById("contenedor-tablas");
-const progressBar = document.getElementById("progressBar"); // Nuevo
-const progressText = document.getElementById("progressText"); // Nuevo
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
 const agrupadoPorAnio = {};
 
 materias.forEach(m => {
@@ -47,7 +48,6 @@ materias.forEach(m => {
   agrupadoPorAnio[m.anio].push(m);
 });
 
-// NUEVA FUNCIÓN: Actualizar la barra de progreso
 function updateProgressBar() {
     let materiasAprobadas = 0;
     const totalMaterias = materias.length;
@@ -57,7 +57,6 @@ function updateProgressBar() {
         if (savedData) {
             const data = JSON.parse(savedData);
             const notaFinal = parseFloat(data.notaFinal);
-            // Consideramos aprobada si la nota final es >= 4
             if (!isNaN(notaFinal) && notaFinal >= 4) {
                 materiasAprobadas++;
             }
@@ -65,10 +64,18 @@ function updateProgressBar() {
     });
 
     const porcentaje = totalMaterias > 0 ? (materiasAprobadas / totalMaterias) * 100 : 0;
-    progressBar.style.width = `${porcentaje.toFixed(2)}%`; // Usamos toFixed(2) para 2 decimales
-    progressText.textContent = `${porcentaje.toFixed(0)}% de materias aprobadas`; // Redondeamos para el texto
+    progressBar.style.width = `${porcentaje.toFixed(2)}%`;
+    progressText.textContent = `${porcentaje.toFixed(0)}% de materias aprobadas`;
 }
-// FIN NUEVA FUNCIÓN
+
+// Emojis y sus clases de animación
+const moodEmojis = [
+    { emoji: '😡', class: 'animate-angry' },
+    { emoji: '😢', class: 'animate-sad' },
+    { emoji: '😄', class: 'animate-happy' },
+    { emoji: '🥰', class: 'animate-love' },
+    { emoji: '😟', class: 'animate-worried' }
+];
 
 for (const anio in agrupadoPorAnio) {
   const seccion = document.createElement("div");
@@ -87,7 +94,7 @@ for (const anio in agrupadoPorAnio) {
       <th>Final</th>
       <th>Fecha de Cierre</th>
       <th>Nota Final</th>
-    </tr>
+      <th>Mood</th> </tr>
   `;
   tabla.appendChild(thead);
 
@@ -112,6 +119,44 @@ for (const anio in agrupadoPorAnio) {
     const tdFecha = document.createElement("td");
     const tdFinal = document.createElement("td");
 
+    // --- Columna del Mood ---
+    const tdMood = document.createElement("td");
+    const moodSelectorDiv = document.createElement("div");
+    moodSelectorDiv.classList.add("mood-selector");
+
+    moodEmojis.forEach(mood => {
+        const emojiSpan = document.createElement("span");
+        emojiSpan.textContent = mood.emoji;
+        emojiSpan.classList.add("mood-emoji");
+        emojiSpan.dataset.emoji = mood.emoji; // Para identificarlo fácilmente
+
+        emojiSpan.addEventListener("click", () => {
+            // Eliminar la clase 'selected' y las animaciones de todos los emojis en esta fila
+            Array.from(moodSelectorDiv.children).forEach(child => {
+                child.classList.remove("selected");
+                moodEmojis.forEach(m => child.classList.remove(m.class)); // Remover todas las clases de animación
+            });
+
+            // Seleccionar el emoji actual y aplicar su animación
+            emojiSpan.classList.add("selected");
+            emojiSpan.classList.add(mood.class);
+
+            // Remover la clase de animación después de que termine para que pueda ser disparada de nuevo
+            emojiSpan.addEventListener('animationend', () => {
+                emojiSpan.classList.remove(mood.class);
+            }, { once: true }); // El evento se dispara solo una vez
+
+            // Guardar el mood seleccionado en localStorage
+            const savedData = JSON.parse(localStorage.getItem(materia.nombre)) || {};
+            savedData.mood = mood.emoji;
+            localStorage.setItem(materia.nombre, JSON.stringify(savedData));
+        });
+        moodSelectorDiv.appendChild(emojiSpan);
+    });
+    tdMood.appendChild(moodSelectorDiv);
+    // --- Fin Columna del Mood ---
+
+
     // --- Cargar datos guardados de localStorage al inicio ---
     const savedData = localStorage.getItem(materia.nombre);
     if (savedData) {
@@ -122,17 +167,23 @@ for (const anio in agrupadoPorAnio) {
       tdFinal.textContent = data.notaFinal || "";
       tdFecha.textContent = data.fechaCierre || "";
 
-      // Reaplicar las clases de estado
+      // Reaplicar las clases de estado y de resaltado de materia si el promedio cumple la condición
       if (data.estado === "Promocionada") {
         tdEstado.classList.add("promocionada");
       } else if (data.estado === "Obligatoria") {
         tdEstado.classList.add("obligatoria");
       }
-
-      // Reaplicar clase de resaltado de materia si el promedio cumple la condición
       const loadedPromedio = parseFloat(data.notaFinal);
       if (loadedPromedio >= 4 && loadedPromedio <= 10) {
           tdNombre.classList.add("td-materia-promocionada");
+      }
+
+      // Cargar y seleccionar el mood guardado
+      if (data.mood) {
+          const selectedEmojiSpan = moodSelectorDiv.querySelector(`[data-emoji="${data.mood}"]`);
+          if (selectedEmojiSpan) {
+              selectedEmojiSpan.classList.add("selected");
+          }
       }
     }
     // --- Fin de carga de datos ---
@@ -144,56 +195,49 @@ for (const anio in agrupadoPorAnio) {
       let isPromocionada = false;
 
       // Limpiar clases de resaltado y estado antes de aplicar nuevas
-      tdNombre.classList.remove("td-materia-promocionada"); // Solo se resalta la celda de la materia
-      tdEstado.className = "estado"; // Resetear la clase de estado (para remover 'promocionada'/'obligatoria')
+      tdNombre.classList.remove("td-materia-promocionada");
+      tdEstado.className = "estado";
 
       const partes = val.split("-").map(n => parseFloat(n));
 
       if (val === "") {
-        // Si el campo está vacío, resetear todo
         tdEstado.textContent = "";
         tdFinal.textContent = "";
         tdFecha.textContent = "";
       } else if (partes.length === 1 && !isNaN(partes[0])) {
-        // Caso de una sola nota (ej: 8)
         promedio = partes[0];
-        isPromocionada = (promedio >= 7); // Asumimos promocionada si es >= 7 para una sola nota
+        isPromocionada = (promedio >= 7);
       } else if (partes.length === 2 && partes.every(n => !isNaN(n))) {
-        // Caso de dos notas (ej: 7-7)
         suma = partes[0] + partes[1];
         promedio = (partes[0] + partes[1]) / 2;
-        isPromocionada = (suma >= 14); // Promocionada si la suma es >= 14 para dos notas
+        isPromocionada = (suma >= 14);
       }
 
       if (!isNaN(promedio)) {
         tdFinal.textContent = promedio.toFixed(1);
-        tdFecha.textContent = promedio >= 4 ? new Date().toLocaleDateString("es-AR") : ""; // Fecha si la nota es >=4
+        tdFecha.textContent = promedio >= 4 ? new Date().toLocaleDateString("es-AR") : "";
 
         tdEstado.textContent = isPromocionada ? "Promocionada" : "Obligatoria";
         tdEstado.classList.add(isPromocionada ? "promocionada" : "obligatoria");
 
-        // Lógica para pintar SOLO la celda de "Materia" si el promedio está entre 4 y 10
         if (promedio >= 4 && promedio <= 10) {
           tdNombre.classList.add("td-materia-promocionada");
         }
       } else {
-        // Si la entrada es inválida, asegurar que los campos estén limpios
         tdEstado.textContent = "";
         tdFinal.textContent = "";
         tdFecha.textContent = "";
       }
 
-      // --- Guardar datos en localStorage ---
-      const dataToSave = {
-        notas: val,
-        estado: tdEstado.textContent,
-        notaFinal: tdFinal.textContent,
-        fechaCierre: tdFecha.textContent
-      };
+      // Guardar datos en localStorage
+      const dataToSave = JSON.parse(localStorage.getItem(materia.nombre)) || {};
+      dataToSave.notas = val;
+      dataToSave.estado = tdEstado.textContent;
+      dataToSave.notaFinal = tdFinal.textContent;
+      dataToSave.fechaCierre = tdFecha.textContent;
       localStorage.setItem(materia.nombre, JSON.stringify(dataToSave));
-      // --- Fin de guardar datos ---
-
-      updateProgressBar(); // ¡Importante! Actualizar la barra cada vez que se modifique una nota
+      
+      updateProgressBar(); // Actualizar la barra de progreso
     });
 
     row.appendChild(tdNombre);
@@ -201,6 +245,7 @@ for (const anio in agrupadoPorAnio) {
     row.appendChild(tdEstado);
     row.appendChild(tdFecha);
     row.appendChild(tdFinal);
+    row.appendChild(tdMood);
     tbody.appendChild(row);
   });
 
@@ -209,8 +254,7 @@ for (const anio in agrupadoPorAnio) {
   contenedor.appendChild(seccion);
 }
 
-// Llama a la función para actualizar la barra cuando la página carga por primera vez
-updateProgressBar();
+updateProgressBar(); // Llamada inicial para cargar la barra de progreso al inicio
 
 
 
