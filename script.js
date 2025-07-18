@@ -16,7 +16,7 @@ const materias = [
   { anio: "Tercer año", nombre: "Probabilidad y Estadística" },
   { anio: "Tercer año", nombre: "Teoría de Algoritmos" },
   { anio: "Tercer año", nombre: "Sistemas Operativos" },
-  { anio: "Tercer año", nombre: "Paradigmas de Programación" },
+  { anio: "Tercer año", "nombre": "Paradigmas de Programación" },
   { anio: "Tercer año", nombre: "Base de Datos" },
   { anio: "Tercer año", nombre: "Modelación Numérica" },
   { anio: "Tercer año", nombre: "Taller de Programación" },
@@ -70,6 +70,8 @@ for (const anio in agrupadoPorAnio) {
 
   agrupadoPorAnio[anio].forEach(materia => {
     const row = document.createElement("tr");
+    // Almacenar el nombre de la materia en un atributo para usarlo como ID en localStorage
+    row.dataset.materiaNombre = materia.nombre;
 
     const tdNombre = document.createElement("td");
     tdNombre.textContent = materia.nombre;
@@ -86,46 +88,72 @@ for (const anio in agrupadoPorAnio) {
     const tdFecha = document.createElement("td");
     const tdFinal = document.createElement("td");
 
+    // --- Cargar datos guardados de localStorage al inicio ---
+    const savedData = localStorage.getItem(materia.nombre);
+    if (savedData) {
+      const data = JSON.parse(savedData);
+      inputNotas.value = data.notas || "";
+      // Disparar el evento 'input' para recalcular y aplicar estilos al cargar
+      const event = new Event('input');
+      inputNotas.dispatchEvent(event);
+    }
+    // --- Fin de carga de datos ---
+
     inputNotas.addEventListener("input", () => {
       const val = inputNotas.value.trim();
-      const partes = val.split("-").map(n => parseFloat(n));
+      let promedio = NaN;
+      let suma = NaN;
+      let isPromocionada = false;
 
       // Limpiar clases de resaltado y estado antes de aplicar nuevas
-      row.classList.remove("promocionada-row");
-      tdNombre.classList.remove("td-materia");
-      tdInput.classList.remove("resaltado-promedio");
-      tdFinal.classList.remove("resaltado-promedio");
+      tdNombre.classList.remove("td-materia-promocionada"); // Solo se resalta la celda de la materia
       tdEstado.className = "estado"; // Resetear la clase de estado
 
-      if (partes.length === 2 && partes.every(n => !isNaN(n))) {
-        const suma = partes[0] + partes[1];
-        const promedio = (partes[0] + partes[1]) / 2;
+      const partes = val.split("-").map(n => parseFloat(n));
 
-        tdEstado.textContent = suma >= 14 ? "Promocionada" : "Obligatoria";
-        tdEstado.classList.add(suma >= 14 ? "promocionada" : "obligatoria"); // Usar add para no sobreescribir 'estado'
-
-        tdFinal.textContent = promedio.toFixed(1);
-
-        tdFecha.textContent = promedio >= 4 ? new Date().toLocaleDateString("es-AR") : "";
-
-        // Lógica para pintar la celda de "Materia" si está promocionada
-        if (suma >= 14) {
-          row.classList.add("promocionada-row");
-          tdNombre.classList.add("td-materia");
-        }
-
-        // Lógica para resaltar celdas si el promedio está entre 4 y 10
-        if (promedio >= 4 && promedio <= 10) {
-          tdInput.classList.add("resaltado-promedio");
-          tdFinal.classList.add("resaltado-promedio");
-        }
-
-      } else {
+      if (val === "") {
+        // Si el campo está vacío, resetear todo
         tdEstado.textContent = "";
-        tdFecha.textContent = "";
         tdFinal.textContent = "";
-        // Las clases de resaltado y estado ya se limpiaron al inicio del listener
+        tdFecha.textContent = "";
+      } else if (partes.length === 1 && !isNaN(partes[0])) {
+        // Caso de una sola nota (ej: 8)
+        promedio = partes[0];
+        isPromocionada = (promedio >= 7); // Asumimos promocionada si es >= 7 para una sola nota
+      } else if (partes.length === 2 && partes.every(n => !isNaN(n))) {
+        // Caso de dos notas (ej: 7-7)
+        suma = partes[0] + partes[1];
+        promedio = (partes[0] + partes[1]) / 2;
+        isPromocionada = (suma >= 14); // Promocionada si la suma es >= 14 para dos notas
       }
+
+      if (!isNaN(promedio)) {
+        tdFinal.textContent = promedio.toFixed(1);
+        tdFecha.textContent = promedio >= 4 ? new Date().toLocaleDateString("es-AR") : ""; // Fecha si la nota es >=4
+
+        tdEstado.textContent = isPromocionada ? "Promocionada" : "Obligatoria";
+        tdEstado.classList.add(isPromocionada ? "promocionada" : "obligatoria");
+
+        // Lógica para pintar SOLO la celda de "Materia" si está promocionada
+        if (isPromocionada) {
+          tdNombre.classList.add("td-materia-promocionada");
+        }
+      } else {
+        // Si la entrada es inválida, asegurar que los campos estén limpios
+        tdEstado.textContent = "";
+        tdFinal.textContent = "";
+        tdFecha.textContent = "";
+      }
+
+      // --- Guardar datos en localStorage ---
+      const dataToSave = {
+        notas: val,
+        estado: tdEstado.textContent,
+        notaFinal: tdFinal.textContent,
+        fechaCierre: tdFecha.textContent
+      };
+      localStorage.setItem(materia.nombre, JSON.stringify(dataToSave));
+      // --- Fin de guardar datos ---
     });
 
     row.appendChild(tdNombre);
