@@ -20,14 +20,16 @@ body {
   justify-content: center;
 }
 
-/* Título principal */
+/* Título principal - Más como un título y centrado */
 h1 {
   text-align: center;
-  margin: 20px;
-  font-family: 'Playfair Display', serif; /* Fuente principal para el título */
-  font-weight: 700; /* Un poco más de peso para que destaque */
-  font-size: 2.5em; /* Tamaño grande para el título */
+  margin: 30px auto; /* Aumentamos margen superior/inferior, y auto para centrar si el contenedor es más grande */
+  font-family: 'Great Vibes', cursive; /* Nueva fuente para el título principal */
+  font-weight: 400; /* Las fuentes script suelen tener un peso estándar */
+  font-size: 3.5em; /* Tamaño grande para que destaque como título */
   color: var(--color-1);
+  line-height: 1.2; /* Espaciado entre líneas para texto largo */
+  max-width: 800px; /* Limita el ancho del título para que no se extienda demasiado */
 }
 
 .contenedor-principal {
@@ -51,8 +53,8 @@ h1 {
 /* Títulos de Año */
 .anio h2 {
   margin: 0 0 10px;
-  font-family: 'Lora', serif; /* Fuente para el año */
-  font-size: 1.8em; /* Tamaño de letra para el año */
+  font-family: 'Dancing Script', cursive; /* Nueva fuente para el año */
+  font-size: 2.2em; /* Tamaño de letra para el año */
   color: var(--color-1);
   border-bottom: 2px solid var(--color-2);
   padding-bottom: 5px;
@@ -67,7 +69,7 @@ table {
 th, td {
   border-right: 1px solid var(--color-3);
   border-bottom: 1px solid var(--color-3);
-  word-wrap: break-word;
+  word-wrap: break-word; /* Permite el corte de palabras largas DENTRO de la celda si no hay espacio */
   text-align: center;
   vertical-align: middle;
 }
@@ -84,11 +86,11 @@ tr:last-child td {
 th {
   background-color: var(--color-2);
   color: white;
-  text-align: center; /* Centrar los encabezados */
+  text-align: center;
   padding: 8px;
-  font-family: 'Montserrat', sans-serif; /* Fuente para encabezados de columna */
-  font-weight: 600; /* Un poco más de peso */
-  font-size: 0.95em; /* Tamaño para los encabezados */
+  font-family: 'Quicksand', sans-serif; /* Fuente para encabezados de columna */
+  font-weight: 600;
+  font-size: 0.9em; /* Ajuste a un tamaño que combine con el resto */
 }
 
 td {
@@ -96,19 +98,21 @@ td {
   padding: 8px;
 }
 
-/* Nombres de Materia */
+/* Nombres de Materia - Aseguramos que no se corten y un tamaño óptimo */
 td:first-child { /* Esta es la columna 'Materia' */
-  font-family: 'Montserrat', sans-serif; /* Fuente para los nombres de materia */
-  font-weight: 500; /* Peso medio */
-  font-size: 1.05em; /* Un poco más grande para el nombre de la materia */
+  font-family: 'Quicksand', sans-serif; /* Fuente para los nombres de materia */
+  font-weight: 500;
+  font-size: 1em; /* Tamaño ajustado para legibilidad y que quepa */
+  white-space: normal; /* Asegura que el texto pueda envolverse en múltiples líneas si es necesario */
+  /* Ajustamos el ancho de la primera columna para dar más espacio a las materias */
+  width: 30%; /* Le damos un 30% del ancho total de la tabla */
 }
 
 /* Contenido de las demás columnas (Notas Parciales, Final, Fecha de Cierre, Nota Final) */
-td:not(:first-child) { /* Todas las celdas que no son la primera (Materia) */
-  font-family: 'Open Sans', sans-serif; /* Fuente para el contenido numérico y de fecha */
-  font-size: 0.9em; /* Tamaño ligeramente menor para los datos */
+td:not(:first-child) {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.9em;
 }
-
 
 input[type='text'] {
   width: 80%;
@@ -119,8 +123,8 @@ input[type='text'] {
   box-sizing: border-box;
   display: block;
   margin: 0 auto;
-  font-family: 'Open Sans', sans-serif; /* Aseguramos que el input use la fuente de contenido */
-  font-size: 0.9em; /* Mismo tamaño que el contenido de las celdas */
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.9em;
 }
 
 input[type='text']:focus {
@@ -130,7 +134,7 @@ input[type='text']:focus {
 }
 
 .estado {
-  font-weight: bold; /* Mantenemos negrita para Promocionada/Obligatoria */
+  font-weight: bold;
 }
 
 .promocionada {
@@ -143,10 +147,10 @@ input[type='text']:focus {
 
 .td-materia-promocionada {
   background-color: var(--color-aprobada-fondo);
-  font-weight: bold; /* Mantenemos negrita para que la materia resaltada destaque */
+  font-weight: bold;
 }
 
-/* Responsive (Manteniendo las columnas y el scroll horizontal) */
+/* Responsive */
 @media screen and (max-width: 600px) {
   body {
     padding: 0 5px;
@@ -154,8 +158,9 @@ input[type='text']:focus {
 
   /* Ajuste para el título en móvil */
   h1 {
-    font-size: 1.8em; /* Un poco más pequeño para pantallas chicas */
-    margin: 15px 0;
+    font-size: 2.5em; /* Un poco más pequeño pero aún grande para móvil */
+    margin: 15px auto;
+    max-width: 100%; /* Asegura que no se desborde */
   }
 
   .contenedor-principal {
@@ -173,11 +178,11 @@ input[type='text']:focus {
   .anio h2 {
     padding: 16px 16px 5px;
     margin-bottom: 10px;
-    font-size: 1.5em; /* Un poco más pequeño para el año en móvil */
+    font-size: 1.8em; /* Un poco más pequeño para el año en móvil */
   }
 
   table {
-    min-width: 550px;
+    min-width: 550px; /* Mínimo para que las columnas no se achiquen demasiado */
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
@@ -186,28 +191,20 @@ input[type='text']:focus {
 
   th, td {
     padding: 8px 4px;
-    font-size: 0.8em; /* Reducimos aún más el tamaño de fuente en móvil */
+    font-size: 0.75em; /* Reducimos el tamaño de fuente en móvil para todas las celdas */
     white-space: normal;
     box-sizing: border-box;
   }
 
-  /* Ajustamos tamaños de texto para móvil para mantener la legibilidad */
-  th {
-    font-size: 0.85em;
-  }
+  /* Ajustamos tamaño de fuente específico para Materia en móvil */
   td:first-child {
-    font-size: 0.95em;
-  }
-  td:not(:first-child) {
-    font-size: 0.8em;
-  }
-  input[type='text'] {
-    font-size: 0.8em;
+      font-size: 0.9em; /* Materia ligeramente más grande que el resto del contenido en móvil */
   }
 
   input[type='text'] {
     width: 95%;
     padding: 5px;
+    font-size: 0.75em; /* Coincide con el tamaño de celda en móvil */
   }
 
   th, td {
