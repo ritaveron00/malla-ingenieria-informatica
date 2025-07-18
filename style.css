@@ -1,49 +1,76 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f7f3e8;
-  color: #4b3e2e;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
   padding: 20px;
+  background-color: #f9f9f9;
+  color: #333;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 30px;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 30px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
 }
 
 th, td {
-  border: 1px solid #b99668;
   padding: 10px;
-  text-align: left;
-}
-
-th {
-  background-color: #8a724c;
-  color: white;
-}
-
-.anio td {
-  background-color: #dcc9a7;
-  font-weight: bold;
-  text-transform: uppercase;
-  font-size: 1.1em;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 0.95em;
+  min-width: 110px;
 }
 
 input.materia-input {
   width: 100%;
-  padding: 6px;
-  box-sizing: border-box;
+  padding: 6px 8px;
+  background-color: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.9em;
 }
 
-.tachado {
-  text-decoration: line-through;
-  color: gray;
+.final, .fecha, .promedio {
+  font-weight: bold;
 }
+
+@media (max-width: 768px) {
+  table {
+    font-size: 0.85em;
+  }
+
+  th, td {
+    padding: 6px;
+    min-width: 90px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.3em;
+  }
+
+  th, td {
+    padding: 5px;
+    font-size: 0.8em;
+  }
+
+  input.materia-input {
+    font-size: 0.8em;
+  }
+}
+
 
 
 
