@@ -20,12 +20,13 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
+  position: relative; /* Necesario para posicionar elementos si los hubiera */
 }
 
 /* Título principal */
 h1 {
   text-align: center;
-  margin: 30px auto 20px auto; /* Reducimos el margen inferior para la barra */
+  margin: 30px auto 20px auto;
   font-family: 'Dancing Script', cursive;
   font-weight: 700;
   font-size: 3.8em;
@@ -35,43 +36,43 @@ h1 {
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-/* NUEVAS REGLAS PARA LA BARRA DE PROGRESO */
+/* REGLAS PARA LA BARRA DE PROGRESO */
 .progress-container {
-    width: 90%; /* Ancho de la barra, adaptable */
-    max-width: 800px; /* Ancho máximo igual al título */
-    background-color: var(--color-3); /* Fondo de la barra (color claro) */
+    width: 90%;
+    max-width: 800px;
+    background-color: var(--color-3);
     border-radius: 10px;
-    height: 25px; /* Altura de la barra */
-    overflow: hidden; /* Asegura que el relleno no se salga */
-    margin: 0 auto 30px auto; /* Centrar y añadir margen inferior */
-    border: 1px solid var(--color-2); /* Borde sutil */
+    height: 25px;
+    overflow: hidden;
+    margin: 0 auto 30px auto;
+    border: 1px solid var(--color-2);
     position: relative;
     display: flex;
-    align-items: center; /* Centra el texto verticalmente */
-    justify-content: center; /* Centra el texto horizontalmente inicialmente */
+    align-items: center;
+    justify-content: center;
 }
 
 .progress-bar {
     height: 100%;
-    width: 0%; /* Empezará en 0% y JavaScript lo actualizará */
-    background-color: var(--color-2); /* Color de relleno (marrón medio) */
+    width: 0%;
+    background-color: var(--color-2);
     border-radius: 10px;
-    transition: width 0.7s ease-in-out; /* Animación suave al cambiar el ancho */
-    position: absolute; /* Para que el texto se pueda superponer */
+    transition: width 0.7s ease-in-out;
+    position: absolute;
     left: 0;
     top: 0;
 }
 
 .progress-text {
-    position: relative; /* Para que esté por encima de la barra de relleno */
-    z-index: 1; /* Asegura que el texto esté visible */
-    color: var(--color-1); /* Color del texto del porcentaje */
+    position: relative;
+    z-index: 1;
+    color: var(--color-1);
     font-family: 'Quicksand', sans-serif;
-    font-size: 1em; /* Tamaño de fuente para el porcentaje */
+    font-size: 1em;
     font-weight: 600;
-    text-shadow: 0 0 5px rgba(255,255,255,0.7); /* Ligera sombra para visibilidad */
+    text-shadow: 0 0 5px rgba(255,255,255,0.7);
 }
-/* FIN NUEVAS REGLAS */
+/* FIN REGLAS DE BARRA DE PROGRESO */
 
 
 .contenedor-principal {
@@ -87,10 +88,6 @@ h1 {
   background-color: var(--color-4);
   border-radius: 12px;
   padding: 16px;
-}
-
-.anio:hover {
-  box-shadow: none;
 }
 
 /* Títulos de Año */
@@ -144,15 +141,101 @@ td {
 td:first-child {
   font-family: 'Quicksand', sans-serif;
   font-weight: 500;
-  width: 30%;
+  width: 25%; /* Ajustado para dar espacio a la nueva columna */
 }
+
+/* REGLAS PARA EL MOOD ACADÉMICO */
+.mood-selector {
+    display: flex;
+    justify-content: center;
+    gap: 5px; /* Espacio entre emojis */
+    padding: 0;
+    margin: 0;
+}
+
+.mood-emoji {
+    font-size: 1.5em; /* Tamaño del emoji */
+    cursor: pointer;
+    opacity: 0.5; /* Opacidad por defecto */
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+    padding: 2px;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+.mood-emoji:hover {
+    opacity: 0.8;
+    transform: scale(1.1); /* Ligeramente más grande al pasar el mouse */
+}
+
+.mood-emoji.selected {
+    opacity: 1; /* Opacidad completa si está seleccionado */
+    transform: scale(1.2); /* Más grande si está seleccionado */
+    background-color: rgba(185, 150, 104, 0.2); /* Fondo suave cuando seleccionado */
+    box-shadow: 0 0 5px rgba(185, 150, 104, 0.5);
+}
+
+/* Animaciones para cada emoji */
+/* Enojado: Ceño fruncido / Enfado */
+@keyframes angry-frown {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(0.95); } /* Ligeramente más pequeño, como si se encogiera de enfado */
+    50% { transform: scale(1.05); } /* Ligeramente más grande */
+    75% { transform: scale(0.98); }
+}
+.mood-emoji.animate-angry { animation: angry-frown 0.4s ease-in-out; }
+
+/* Triste: Llanto / Llorando */
+@keyframes sad-cry {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(2px) rotate(-1deg); } /* Pequeño movimiento hacia abajo y rotación */
+    50% { transform: translateY(0) rotate(0deg); }
+    75% { transform: translateY(2px) rotate(1deg); }
+}
+.mood-emoji.animate-sad { animation: sad-cry 0.6s ease-in-out; }
+
+/* Feliz: Sonriendo / Rebotando */
+@keyframes happy-bounce {
+    0%, 100% { transform: translateY(0) scaleX(1); }
+    25% { transform: translateY(-5px) scaleX(1.05); } /* Salta y se estira horizontalmente */
+    50% { transform: translateY(0) scaleX(1); }
+    75% { transform: translateY(-3px) scaleX(1.02); }
+}
+.mood-emoji.animate-happy { animation: happy-bounce 0.5s ease-out; }
+
+/* Enamorado: Corazoncitos latiendo */
+@keyframes love-heartbeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.2); } /* Latido más pronunciado */
+    30% { transform: scale(1); }
+    45% { transform: scale(1.1); } /* Segundo latido más suave */
+    60% { transform: scale(1); }
+}
+.mood-emoji.animate-love { animation: love-heartbeat 0.8s ease-in-out; }
+
+/* Preocupado: Temblor */
+@keyframes worried-tremble {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    10% { transform: translateX(-1px) translateY(1px); }
+    20% { transform: translateX(1px) translateY(-1px); }
+    30% { transform: translateX(-1px) translateY(1px); }
+    40% { transform: translateX(1px) translateY(-1px); }
+    50% { transform: translateX(-1px) translateY(1px); }
+    60% { transform: translateX(1px) translateY(-1px); }
+    70% { transform: translateX(-1px) translateY(1px); }
+    80% { transform: translateX(1px) translateY(-1px); }
+    90% { transform: translateX(-1px) translateY(1px); }
+}
+.mood-emoji.animate-worried { animation: worried-tremble 0.5s linear; }
+/* FIN NUEVAS REGLAS DE MOOD ACADÉMICO */
+
 
 /* Input de Notas Parciales */
 input[type='text'] {
   width: 80%;
   padding: 6px;
   border: 1px solid var(--color-3);
-  border-radius: 6-px;
+  border-radius: 6px;
   background-color: transparent;
   box-sizing: border-box;
   display: block;
@@ -197,7 +280,7 @@ input[type='text']:focus {
 
   h1 {
     font-size: 2.8em;
-    margin: 15px auto 10px auto; /* Ajuste para móvil también */
+    margin: 15px auto 10px auto;
     max-width: 100%;
   }
 
@@ -229,7 +312,7 @@ input[type='text']:focus {
   }
 
   table {
-    min-width: 580px;
+    min-width: 680px; /* Asegura que la tabla no se rompa */
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
