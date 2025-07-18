@@ -38,12 +38,37 @@ const materias = [
 ];
 
 const contenedor = document.getElementById("contenedor-tablas");
+const progressBar = document.getElementById("progressBar"); // Nuevo
+const progressText = document.getElementById("progressText"); // Nuevo
 const agrupadoPorAnio = {};
 
 materias.forEach(m => {
   if (!agrupadoPorAnio[m.anio]) agrupadoPorAnio[m.anio] = [];
   agrupadoPorAnio[m.anio].push(m);
 });
+
+// NUEVA FUNCIÓN: Actualizar la barra de progreso
+function updateProgressBar() {
+    let materiasAprobadas = 0;
+    const totalMaterias = materias.length;
+
+    materias.forEach(materia => {
+        const savedData = localStorage.getItem(materia.nombre);
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            const notaFinal = parseFloat(data.notaFinal);
+            // Consideramos aprobada si la nota final es >= 4
+            if (!isNaN(notaFinal) && notaFinal >= 4) {
+                materiasAprobadas++;
+            }
+        }
+    });
+
+    const porcentaje = totalMaterias > 0 ? (materiasAprobadas / totalMaterias) * 100 : 0;
+    progressBar.style.width = `${porcentaje.toFixed(2)}%`; // Usamos toFixed(2) para 2 decimales
+    progressText.textContent = `${porcentaje.toFixed(0)}% de materias aprobadas`; // Redondeamos para el texto
+}
+// FIN NUEVA FUNCIÓN
 
 for (const anio in agrupadoPorAnio) {
   const seccion = document.createElement("div");
@@ -167,6 +192,8 @@ for (const anio in agrupadoPorAnio) {
       };
       localStorage.setItem(materia.nombre, JSON.stringify(dataToSave));
       // --- Fin de guardar datos ---
+
+      updateProgressBar(); // ¡Importante! Actualizar la barra cada vez que se modifique una nota
     });
 
     row.appendChild(tdNombre);
@@ -182,6 +209,8 @@ for (const anio in agrupadoPorAnio) {
   contenedor.appendChild(seccion);
 }
 
+// Llama a la función para actualizar la barra cuando la página carga por primera vez
+updateProgressBar();
 
 
 
