@@ -1,9 +1,9 @@
 :root {
-  --color-1: #8A724C; /* Marrón oscuro */
-  --color-2: #B99668; /* Marrón medio */
-  --color-3: #DCC9A7; /* Marrón claro / Beige */
-  --color-4: #EDE2CC; /* Marrón muy claro / Crema */
-  --color-5: #F7F3E8; /* Blanco roto / Crema muy claro */
+  --color-1: #8A724C; /* Marrón oscuro (para texto principal, promocionada/obligatoria) */
+  --color-2: #B99668; /* Marrón medio (para encabezados de tabla, bordes, foco) */
+  --color-3: #DCC9A7; /* Marrón claro / Beige (para bordes de celda) */
+  --color-4: #EDE2CC; /* Marrón muy claro / Crema (para fondo de sección de año y materias promocionadas) */
+  --color-5: #F7F3E8; /* Blanco roto / Crema muy claro (para fondo principal del body) */
 
   --color-aprobada-fondo: var(--color-4); /* Fondo para la materia aprobada (columna Materia) */
   --color-borde-foco: var(--color-2); /* Color del borde al seleccionar el input */
@@ -15,20 +15,20 @@ body {
   font-family: 'Open Sans', sans-serif; /* Fuente base */
   margin: 0;
   padding: 0;
-  color: var(--color-1);
+  color: var(--color-1); /* Color de texto base (marrón oscuro) */
   display: flex;
-  flex-direction: column; /* Cambiado para permitir que el h1 se centre correctamente */
-  align-items: center; /* Centra el contenido horizontalmente */
-  min-height: 100vh; /* Asegura que el body ocupe al menos toda la altura de la vista */
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
 
-/* Título principal - Clara, delicada y con estilo de título */
+/* Título principal */
 h1 {
   text-align: center;
-  margin: 30px auto; /* Centrado horizontal */
-  font-family: 'Dancing Script', cursive; /* Nueva fuente: Dancing Script */
-  font-weight: 700; /* Un poco más de peso para que destaque */
-  font-size: 3.8em; /* Tamaño grande para que destaque como título */
+  margin: 30px auto;
+  font-family: 'Dancing Script', cursive;
+  font-weight: 700;
+  font-size: 3.8em;
   color: var(--color-1);
   line-height: 1.2;
   max-width: 800px;
@@ -40,12 +40,12 @@ h1 {
   width: 95%;
   padding: 20px;
   box-sizing: border-box;
-  flex-grow: 1; /* Permite que el contenedor principal ocupe el espacio restante */
+  flex-grow: 1;
 }
 
 .anio {
   margin-bottom: 40px;
-  background-color: var(--color-4);
+  background-color: var(--color-4); /* Fondo de la sección del año */
   border-radius: 12px;
   padding: 16px;
 }
@@ -54,11 +54,11 @@ h1 {
   box-shadow: none;
 }
 
-/* Títulos de Año - Nueva fuente */
+/* Títulos de Año */
 .anio h2 {
   margin: 0 0 10px;
-  font-family: 'Dancing Script', cursive; /* Nueva fuente: Dancing Script */
-  font-weight: 700; /* Un poco más de peso para que destaque */
+  font-family: 'Dancing Script', cursive;
+  font-weight: 700;
   font-size: 2.3em;
   color: var(--color-1);
   border-bottom: 2px solid var(--color-2);
@@ -68,80 +68,47 @@ h1 {
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Mantiene el ancho de columnas fijo */
-}
-
-th, td {
-  border: 1px solid var(--color-3); /* Solo bordes */
-  border-left: none; /* Quitamos borde izquierdo */
-  border-top: none; /* Quitamos borde superior */
-  word-wrap: normal;
-  white-space: normal;
-  overflow: hidden;
-  text-overflow: clip;
-  text-align: center;
-  vertical-align: middle;
-  background-color: transparent; /* Fondo transparente para todas las celdas */
-}
-
-/* Ajustes de bordes para una apariencia más limpia */
-th:first-child, td:first-child {
-  border-left: 1px solid var(--color-3); /* Mantenemos el borde izquierdo de la primera columna */
-}
-
-th:first-child {
-  border-top: 1px solid var(--color-3); /* Mantenemos el borde superior de la primera celda del thead */
+  table-layout: fixed;
+  border-radius: 8px; /* Redondea las esquinas de la tabla */
+  overflow: hidden; /* Asegura que el contenido se recorte si sobresale de los bordes redondeados */
+  border: 1px solid var(--color-3); /* Borde exterior para la tabla */
 }
 
 th {
   background-color: var(--color-2);
   color: white;
+  text-align: center;
   padding: 8px;
   font-family: 'Quicksand', sans-serif;
   font-weight: 600;
   font-size: 0.9em;
-  /* Bordes específicos para los th para que se vean unidos y definidos */
-  border-left: 1px solid var(--color-3);
-  border-right: 1px solid var(--color-3);
-  border-top: 1px solid var(--color-3);
-  border-bottom: 1px solid var(--color-3);
+  border: 1px solid var(--color-3); /* Bordes de los th */
 }
 
-/* Redondeo de bordes para la tabla */
-table {
-    border-radius: 8px; /* Redondea las esquinas de la tabla */
-    overflow: hidden; /* Asegura que el contenido se recorte si sobresale de los bordes redondeados */
-    border: 1px solid var(--color-3); /* Borde exterior para la tabla */
-}
-
-/* Para quitar bordes dobles */
-table th, table td {
-    border-top: none;
-    border-left: none;
-}
-
-table tr:first-child th {
-    border-top: 1px solid var(--color-3);
-}
-
-table tr td:first-child {
-    border-left: 1px solid var(--color-3);
-}
-
-/* Nombres de Materia y Contenido de las demás columnas con el mismo tamaño */
 td {
+  background-color: var(--color-5); /* CAMBIO: Fondo por defecto para todas las celdas (antes transparente) */
+  padding: 8px;
+  border: 1px solid var(--color-3); /* Bordes para todas las celdas */
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: normal;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: clip;
   font-family: 'Open Sans', sans-serif;
   font-size: 0.95em; /* Mismo tamaño que la materia para todos los datos */
   line-height: 1.3;
+  color: var(--color-1); /* CAMBIO: Color de texto para el contenido de los td */
 }
 
-/* Estilo específico para la columna de Materia (primer td) */
+/* Nombres de Materia (primer td) */
 td:first-child {
-  font-family: 'Quicksand', sans-serif; /* Usamos Quicksand para el nombre de la materia */
+  font-family: 'Quicksand', sans-serif; /* Fuente para el nombre de la materia */
   font-weight: 500;
   width: 30%;
 }
 
+/* Input de Notas Parciales */
 input[type='text'] {
   width: 80%;
   padding: 6px;
@@ -153,7 +120,8 @@ input[type='text'] {
   margin: 0 auto;
   font-family: 'Open Sans', sans-serif;
   font-size: 0.95em; /* Mismo tamaño que los datos de las celdas */
-  text-align: center; /* Centrar el texto dentro del input */
+  text-align: center;
+  color: var(--color-1); /* CAMBIO: Color de texto para el input de notas */
 }
 
 input[type='text']:focus {
@@ -176,8 +144,9 @@ input[type='text']:focus {
   color: var(--color-2);
 }
 
+/* Resalte de la Materia Promocionada */
 .td-materia-promocionada {
-  background-color: var(--color-aprobada-fondo); /* Este fondo sí se mantiene */
+  background-color: var(--color-aprobada-fondo); /* CAMBIO: Volvemos a usar background-color */
   font-weight: bold;
 }
 
@@ -188,7 +157,7 @@ input[type='text']:focus {
   }
 
   h1 {
-    font-size: 2.8em; /* Ajuste para que se vea bien en móvil */
+    font-size: 2.8em;
     margin: 15px auto;
     max-width: 100%;
   }
@@ -208,7 +177,7 @@ input[type='text']:focus {
   .anio h2 {
     padding: 16px 16px 5px;
     margin-bottom: 10px;
-    font-size: 1.9em; /* Ajuste para el año en móvil */
+    font-size: 1.9em;
   }
 
   table {
@@ -217,28 +186,28 @@ input[type='text']:focus {
     border-collapse: collapse;
     table-layout: fixed;
     display: table;
-    border-radius: 8px; /* Mantener redondeo en móvil */
+    border-radius: 8px;
   }
 
   th, td {
     padding: 8px 4px;
-    font-size: 0.85em; /* Ajuste de tamaño de fuente general para celdas en móvil */
+    font-size: 0.85em;
     white-space: normal;
     box-sizing: border-box;
   }
 
   td:first-child {
-      font-size: 0.9em; /* Materia ligeramente más grande que el resto del contenido en móvil */
+      font-size: 0.9em;
   }
   
   .estado {
-    font-size: 0.75em; /* Tamaño para Promocionada/Obligatoria en móvil */
+    font-size: 0.75em;
   }
 
   input[type='text'] {
     width: 95%;
     padding: 5px;
-    font-size: 0.85em; /* Coincide con el tamaño de celda en móvil */
+    font-size: 0.85em;
   }
 
   th, td {
