@@ -1,73 +1,65 @@
+:root {
+  --color-1: #8A724C;
+  --color-2: #B99668;
+  --color-3: #DCC9A7;
+  --color-4: #EDE2CC;
+  --color-5: #F7F3E8;
+  --verde: #b1d6ab;
+  --rojo: #e3a8a8;
+}
+
 body {
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
+  font-family: 'Quicksand', sans-serif;
+  background-color: var(--color-5);
   padding: 20px;
-  background-color: #f8f9fa;
   color: #333;
 }
 
 h1 {
   text-align: center;
-  font-size: 1.5em;
-}
-
-.table-container {
-  overflow-x: auto;
+  color: var(--color-1);
+  margin-bottom: 30px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 0 auto;
-  min-width: 600px;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 th, td {
-  padding: 8px;
-  border: 1px solid #ccc;
-  text-align: center;
-  min-width: 110px;
-}
-
-input.materia-input {
-  width: 90%;
-  max-width: 90px;
-  padding: 4px;
-  background-color: #e3f2fd; /* fondo azul claro */
-  border: 1px solid #90caf9;
-  border-radius: 4px;
+  border: 1px solid var(--color-3);
+  padding: 10px;
   text-align: center;
 }
 
-@media (max-width: 768px) {
-  table {
-    font-size: 0.9em;
-  }
-
-  th, td {
-    min-width: 80px;
-    padding: 6px;
-  }
-
-  input.materia-input {
-    width: 100%;
-    max-width: none;
-  }
+th {
+  background-color: var(--color-2);
+  color: white;
 }
 
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.2em;
-  }
-
-  table {
-    font-size: 0.8em;
-  }
-
-  th, td {
-    padding: 5px;
-  }
+input[type="text"] {
+  width: 70px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--color-3);
+  text-align: center;
 }
+
+td.estado.promocionada {
+  background-color: var(--verde);
+  font-weight: bold;
+}
+
+td.estado.obligatoria {
+  background-color: var(--rojo);
+  font-weight: bold;
+  color: white;
+}
+
 
 
 
