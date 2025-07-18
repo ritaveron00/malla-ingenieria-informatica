@@ -58,7 +58,6 @@ materias.forEach(materia => {
 
   const input = document.createElement("input");
   input.type = "text";
-  input.placeholder = "7-6";
 
   const estadoTd = document.createElement("td");
   estadoTd.classList.add("estado");
