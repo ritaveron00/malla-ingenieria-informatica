@@ -70,7 +70,6 @@ for (const anio in agrupadoPorAnio) {
 
   agrupadoPorAnio[anio].forEach(materia => {
     const row = document.createElement("tr");
-    // Almacenar el nombre de la materia en un atributo para usarlo como ID en localStorage
     row.dataset.materiaNombre = materia.nombre;
 
     const tdNombre = document.createElement("td");
@@ -93,9 +92,20 @@ for (const anio in agrupadoPorAnio) {
     if (savedData) {
       const data = JSON.parse(savedData);
       inputNotas.value = data.notas || "";
-      // Disparar el evento 'input' para recalcular y aplicar estilos al cargar
-      const event = new Event('input');
-      inputNotas.dispatchEvent(event);
+
+      // NUEVO: Rellenar directamente los td con la información guardada
+      tdEstado.textContent = data.estado || "";
+      tdFinal.textContent = data.notaFinal || "";
+      tdFecha.textContent = data.fechaCierre || "";
+
+      // Reaplicar las clases de estado y resaltado si existen en los datos guardados
+      // Esto es crucial para que los estilos se vean al cargar
+      if (data.estado === "Promocionada") {
+        tdEstado.classList.add("promocionada");
+        tdNombre.classList.add("td-materia-promocionada");
+      } else if (data.estado === "Obligatoria") {
+        tdEstado.classList.add("obligatoria");
+      }
     }
     // --- Fin de carga de datos ---
 
@@ -107,7 +117,7 @@ for (const anio in agrupadoPorAnio) {
 
       // Limpiar clases de resaltado y estado antes de aplicar nuevas
       tdNombre.classList.remove("td-materia-promocionada"); // Solo se resalta la celda de la materia
-      tdEstado.className = "estado"; // Resetear la clase de estado
+      tdEstado.className = "estado"; // Resetear la clase de estado (para remover 'promocionada'/'obligatoria')
 
       const partes = val.split("-").map(n => parseFloat(n));
 
