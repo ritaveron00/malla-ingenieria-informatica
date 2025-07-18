@@ -1,5 +1,4 @@
 const materias = [
-  // Primer año
   { anio: "Primer año", nombre: "Pensamiento Científico" },
   { anio: "Primer año", nombre: "Pensamiento Computacional" },
   { anio: "Primer año", nombre: "Análisis Matemático" },
@@ -7,7 +6,6 @@ const materias = [
   { anio: "Primer año", nombre: "Física" },
   { anio: "Primer año", nombre: "Álgebra" },
 
-  // Segundo año
   { anio: "Segundo año", nombre: "Análisis Matemático II" },
   { anio: "Segundo año", nombre: "Fundamentos de Programación" },
   { anio: "Segundo año", nombre: "Introducción al Desarrollo de Software" },
@@ -15,7 +13,6 @@ const materias = [
   { anio: "Segundo año", nombre: "Organización del Computador" },
   { anio: "Segundo año", nombre: "Algoritmos y Estructuras de Datos" },
 
-  // Tercer año
   { anio: "Tercer año", nombre: "Probabilidad y Estadística" },
   { anio: "Tercer año", nombre: "Teoría de Algoritmos" },
   { anio: "Tercer año", nombre: "Sistemas Operativos" },
@@ -25,7 +22,6 @@ const materias = [
   { anio: "Tercer año", nombre: "Taller de Programación" },
   { anio: "Tercer año", nombre: "Ingeniería de Software I" },
 
-  // Cuarto año
   { anio: "Cuarto año", nombre: "Ciencia de Datos" },
   { anio: "Cuarto año", nombre: "Gestión del Desarrollo de Sistemas Informáticos" },
   { anio: "Cuarto año", nombre: "Programación Concurrente" },
@@ -35,17 +31,29 @@ const materias = [
   { anio: "Cuarto año", nombre: "Ingeniería de Software II" },
   { anio: "Cuarto año", nombre: "Sistemas Distribuidos I" },
 
-  // Quinto año
   { anio: "Quinto año", nombre: "Taller de Seguridad Informática" },
   { anio: "Quinto año", nombre: "Empresas de Base Tecnológica II" },
   { anio: "Quinto año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
   { anio: "Quinto año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
 
-
 const tabla = document.getElementById("tabla-materias");
 
-materias.forEach((materia, i) => {
+let ultimoAnio = "";
+
+materias.forEach(materia => {
+  // Si es un nuevo año, insertamos un encabezado
+  if (materia.anio !== ultimoAnio) {
+    const grupoRow = document.createElement("tr");
+    const grupoCell = document.createElement("td");
+    grupoCell.textContent = materia.anio;
+    grupoCell.colSpan = 5;
+    grupoCell.classList.add("grupo-anio");
+    grupoRow.appendChild(grupoCell);
+    tabla.appendChild(grupoRow);
+    ultimoAnio = materia.anio;
+  }
+
   const row = document.createElement("tr");
 
   const input = document.createElement("input");
@@ -94,18 +102,17 @@ materias.forEach((materia, i) => {
   });
 
   row.innerHTML = `
-    <td>${materia.anio}</td>
     <td>${materia.nombre}</td>
     <td></td>
   `;
-
-  row.children[2].appendChild(input);
+  row.children[1].appendChild(input);
   row.appendChild(estadoTd);
   row.appendChild(fechaTd);
   row.appendChild(finalTd);
 
   tabla.appendChild(row);
 });
+
 
 
 
