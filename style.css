@@ -35,12 +35,11 @@ h1 {
   background-color: var(--color-4);
   border-radius: 12px;
   padding: 16px;
-  /* La sombra inicial la manejaremos con un hover distinto si se desea */
 }
 
-/* Regla para eliminar la sombra al pasar el cursor sobre el contenedor del año */
+/* Regla para eliminar cualquier sombra al pasar el cursor sobre el contenedor del año */
 .anio:hover {
-  box-shadow: none; /* Elimina cualquier sombra al hacer hover */
+  box-shadow: none;
 }
 
 .anio h2 {
@@ -65,7 +64,6 @@ th, td {
 th:last-child, td:last-child {
   border-right: none;
 }
-
 
 th {
   background-color: var(--color-2);
@@ -101,10 +99,7 @@ input[type='text'] {
   color: #AA5A44; /* Marrón rojizo */
 }
 
-/* Cambia el color de fondo de las celdas al pasar el cursor sobre la fila */
-tr:hover td {
-  background-color: var(--color-3);
-}
+/* --- ESTA REGLA FUE ELIMINADA: tr:hover td { background-color: var(--color-3); } --- */
 
 /* Responsive */
 @media screen and (max-width: 600px) {
