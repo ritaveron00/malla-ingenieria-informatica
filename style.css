@@ -35,7 +35,12 @@ h1 {
   background-color: var(--color-4);
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  /* La sombra inicial la manejaremos con un hover distinto si se desea */
+}
+
+/* Regla para eliminar la sombra al pasar el cursor sobre el contenedor del año */
+.anio:hover {
+  box-shadow: none; /* Elimina cualquier sombra al hacer hover */
 }
 
 .anio h2 {
@@ -50,6 +55,17 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
+
+/* Nuevas reglas para las líneas de separación entre columnas */
+th, td {
+  border-right: 1px solid var(--color-3); /* Línea de separación para todas las columnas */
+}
+
+/* Quita la línea de separación de la última columna para un mejor acabado */
+th:last-child, td:last-child {
+  border-right: none;
+}
+
 
 th {
   background-color: var(--color-2);
@@ -85,6 +101,7 @@ input[type='text'] {
   color: #AA5A44; /* Marrón rojizo */
 }
 
+/* Cambia el color de fondo de las celdas al pasar el cursor sobre la fila */
 tr:hover td {
   background-color: var(--color-3);
 }
@@ -112,6 +129,7 @@ tr:hover td {
     position: relative;
     padding-left: 50%;
     margin-bottom: 10px;
+    border-right: none; /* Quitar bordes verticales en modo responsive */
   }
 
   td::before {
