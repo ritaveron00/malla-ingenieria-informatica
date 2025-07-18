@@ -59,6 +59,13 @@ td.estado.obligatoria {
   font-weight: bold;
   color: white;
 }
+.grupo-anio {
+  background-color: var(--color-4);
+  font-weight: bold;
+  text-align: left;
+  padding: 12px;
+  color: var(--color-1);
+}
 
 
 
