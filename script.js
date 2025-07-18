@@ -100,11 +100,26 @@ for (const anio in agrupadoPorAnio) {
         tdFinal.textContent = promedio.toFixed(1);
 
         tdFecha.textContent = promedio >= 4 ? new Date().toLocaleDateString("es-AR") : "";
+
+        // --- INICIO DEL CÓDIGO CORREGIDO PARA PINTAR LA FILA DE MATERIA ---
+        if (suma >= 14) {
+          row.classList.add("promocionada-row");
+          tdNombre.classList.add("td-materia");
+        } else {
+          row.classList.remove("promocionada-row");
+          tdNombre.classList.remove("td-materia");
+        }
+        // --- FIN DEL CÓDIGO CORREGIDO ---
+
       } else {
         tdEstado.textContent = "";
         tdEstado.className = "estado";
         tdFecha.textContent = "";
         tdFinal.textContent = "";
+        // --- INICIO DEL CÓDIGO PARA REMOVER CLASES SI EL INPUT ESTÁ VACÍO O INVÁLIDO ---
+        row.classList.remove("promocionada-row");
+        tdNombre.classList.remove("td-materia");
+        // --- FIN DEL CÓDIGO ---
       }
     });
 
@@ -120,7 +135,6 @@ for (const anio in agrupadoPorAnio) {
   seccion.appendChild(tabla);
   contenedor.appendChild(seccion);
 }
-
 
 
 
