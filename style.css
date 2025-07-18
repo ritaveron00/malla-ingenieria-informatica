@@ -20,7 +20,7 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  position: relative; /* Necesario para posicionar elementos si los hubiera */
+  position: relative;
 }
 
 /* Título principal */
@@ -144,43 +144,120 @@ td:first-child {
   width: 25%; /* Ajustado para dar espacio a la nueva columna */
 }
 
-/* REGLAS PARA EL MOOD ACADÉMICO */
-.mood-selector {
-    display: flex;
+/* NEW: Styles for Mood Button and Bubble */
+.mood-container {
+    position: relative; /* Needed for absolute positioning of the bubble */
+    display: flex; /* To center content */
     justify-content: center;
-    gap: 5px; /* Espacio entre emojis */
-    padding: 0;
-    margin: 0;
+    align-items: center;
+    height: 100%; /* Ensure it fills the cell height */
+    width: 100%;
 }
 
-.mood-emoji {
-    font-size: 1.5em; /* Tamaño del emoji */
+.mood-trigger {
+    font-size: 1.5em; /* Size of the default emoji or button text */
     cursor: pointer;
-    opacity: 0.5; /* Opacidad por defecto */
-    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
-    padding: 2px;
-    border-radius: 4px;
     background-color: transparent;
+    border: 1px solid var(--color-3); /* Border like input */
+    border-radius: 6px; /* Rounded corners */
+    padding: 5px 8px; /* Padding for clickability */
+    transition: all 0.2s ease-in-out;
+    color: var(--color-1); /* Text color for 'Select' */
+    min-width: 50px; /* Ensure button has some width */
+    height: 35px; /* Fixed height for consistency */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box; /* Include padding/border in width/height */
 }
 
-.mood-emoji:hover {
-    opacity: 0.8;
-    transform: scale(1.1); /* Ligeramente más grande al pasar el mouse */
+.mood-trigger:hover {
+    border-color: var(--color-borde-foco);
+    box-shadow: 0 0 5px rgba(185, 150, 104, 0.5); /* Shadow like input focus */
+    transform: translateY(-1px); /* Slight lift */
 }
 
-.mood-emoji.selected {
-    opacity: 1; /* Opacidad completa si está seleccionado */
-    transform: scale(1.2); /* Más grande si está seleccionado */
-    background-color: rgba(185, 150, 104, 0.2); /* Fondo suave cuando seleccionado */
-    box-shadow: 0 0 5px rgba(185, 150, 104, 0.5);
+.mood-trigger.selected-emoji {
+    font-size: 1.8em; /* Slightly larger for selected emoji */
+    border: none; /* No border when an emoji is selected */
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0; /* No padding needed */
+    width: auto; /* Width adapts to emoji */
+    min-width: unset;
 }
+.mood-trigger.selected-emoji:hover {
+    transform: scale(1.1); /* Only scale for selected emoji hover */
+    box-shadow: none; /* No shadow */
+}
+
+
+.mood-bubble {
+    position: absolute;
+    display: flex;
+    flex-wrap: nowrap; /* Keep emojis in one line */
+    background-color: rgba(255, 255, 255, 0); /* Transparent background */
+    border: 1px solid var(--color-3); /* Border like input */
+    border-radius: 6px; /* Rounded corners */
+    padding: 5px;
+    box-shadow: 0 0 5px rgba(185, 150, 104, 0.5); /* Shadow like input focus */
+    z-index: 10; /* Ensure it's above other elements */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px); /* Start slightly above */
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
+    top: 50%; /* Center vertically relative to trigger */
+    left: 50%; /* Center horizontally relative to trigger */
+    transform: translate(-50%, -50%); /* Adjust for perfect centering */
+    pointer-events: none; /* Don't block clicks when hidden */
+}
+/* Adjustments for bubble positioning depending on screen size or table side */
+@media (min-width: 601px) { /* On larger screens, position bubble above/left if needed */
+    .mood-bubble {
+        transform: translate(-50%, -100%) translateY(-10px); /* Position above the trigger */
+    }
+    td:last-child .mood-bubble { /* If it's the last column, push left */
+        left: auto;
+        right: 0;
+        transform: translate(0, -100%) translateY(-10px);
+    }
+}
+
+
+.mood-bubble.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%); /* Return to centered position */
+    pointer-events: all; /* Enable clicks */
+}
+@media (min-width: 601px) { /* On larger screens, position bubble above/left if needed */
+    .mood-bubble.active {
+        transform: translate(-50%, -100%) translateY(-10px); /* Position above the trigger */
+    }
+    td:last-child .mood-bubble.active { /* If it's the last column, push left */
+        transform: translate(0, -100%) translateY(-10px);
+    }
+}
+
+
+.mood-bubble .emoji-option {
+    font-size: 1.8em; /* Emojis inside the bubble are a bit larger */
+    cursor: pointer;
+    padding: 0 5px; /* Spacing between emojis */
+    transition: transform 0.1s ease-out;
+}
+
+.mood-bubble .emoji-option:hover {
+    transform: scale(1.2); /* Pop out on hover */
+}
+
 
 /* Animaciones para cada emoji */
 /* Enojado: Ceño fruncido / Enfado */
 @keyframes angry-frown {
     0%, 100% { transform: scale(1); }
-    25% { transform: scale(0.95); } /* Ligeramente más pequeño, como si se encogiera de enfado */
-    50% { transform: scale(1.05); } /* Ligeramente más grande */
+    25% { transform: scale(0.95); }
+    50% { transform: scale(1.05); }
     75% { transform: scale(0.98); }
 }
 .mood-emoji.animate-angry { animation: angry-frown 0.4s ease-in-out; }
@@ -188,7 +265,7 @@ td:first-child {
 /* Triste: Llanto / Llorando */
 @keyframes sad-cry {
     0%, 100% { transform: translateY(0); }
-    25% { transform: translateY(2px) rotate(-1deg); } /* Pequeño movimiento hacia abajo y rotación */
+    25% { transform: translateY(2px) rotate(-1deg); }
     50% { transform: translateY(0) rotate(0deg); }
     75% { transform: translateY(2px) rotate(1deg); }
 }
@@ -197,7 +274,7 @@ td:first-child {
 /* Feliz: Sonriendo / Rebotando */
 @keyframes happy-bounce {
     0%, 100% { transform: translateY(0) scaleX(1); }
-    25% { transform: translateY(-5px) scaleX(1.05); } /* Salta y se estira horizontalmente */
+    25% { transform: translateY(-5px) scaleX(1.05); }
     50% { transform: translateY(0) scaleX(1); }
     75% { transform: translateY(-3px) scaleX(1.02); }
 }
@@ -206,9 +283,9 @@ td:first-child {
 /* Enamorado: Corazoncitos latiendo */
 @keyframes love-heartbeat {
     0%, 100% { transform: scale(1); }
-    15% { transform: scale(1.2); } /* Latido más pronunciado */
+    15% { transform: scale(1.2); }
     30% { transform: scale(1); }
-    45% { transform: scale(1.1); } /* Segundo latido más suave */
+    45% { transform: scale(1.1); }
     60% { transform: scale(1); }
 }
 .mood-emoji.animate-love { animation: love-heartbeat 0.8s ease-in-out; }
@@ -227,7 +304,6 @@ td:first-child {
     90% { transform: translateX(-1px) translateY(1px); }
 }
 .mood-emoji.animate-worried { animation: worried-tremble 0.5s linear; }
-/* FIN NUEVAS REGLAS DE MOOD ACADÉMICO */
 
 
 /* Input de Notas Parciales */
@@ -344,6 +420,13 @@ input[type='text']:focus {
   th, td {
       display: table-cell;
   }
+
+    /* Adjust bubble positioning for mobile to be centered relative to trigger */
+    .mood-bubble.active {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 }
 
 
