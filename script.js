@@ -32,8 +32,8 @@ const materias = [
   { anio: "Cuarto Año", nombre: "Sistemas Distribuidos I" },
 
   { anio: "Quinto Año", nombre: "Taller de Seguridad Informática" },
-  { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
+  { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
 
@@ -119,41 +119,75 @@ for (const anio in agrupadoPorAnio) {
     const tdFecha = document.createElement("td");
     const tdFinal = document.createElement("td");
 
-    // --- Columna del Mood ---
+    // --- Columna del Mood (Botón y Burbuja) ---
     const tdMood = document.createElement("td");
-    const moodSelectorDiv = document.createElement("div");
-    moodSelectorDiv.classList.add("mood-selector");
+    tdMood.classList.add("mood-container"); // Container for positioning
 
+    const moodTrigger = document.createElement("div");
+    moodTrigger.classList.add("mood-trigger");
+    moodTrigger.textContent = "⚙️"; // Default icon or text for the button
+
+    const moodBubble = document.createElement("div");
+    moodBubble.classList.add("mood-bubble");
+
+    // Populate mood bubble with emoji options
     moodEmojis.forEach(mood => {
-        const emojiSpan = document.createElement("span");
-        emojiSpan.textContent = mood.emoji;
-        emojiSpan.classList.add("mood-emoji");
-        emojiSpan.dataset.emoji = mood.emoji; // Para identificarlo fácilmente
+        const emojiOption = document.createElement("span");
+        emojiOption.textContent = mood.emoji;
+        emojiOption.classList.add("emoji-option");
+        emojiOption.dataset.emoji = mood.emoji; // Store emoji value
+        emojiOption.dataset.animationClass = mood.class; // Store animation class
 
-        emojiSpan.addEventListener("click", () => {
-            // Eliminar la clase 'selected' y las animaciones de todos los emojis en esta fila
-            Array.from(moodSelectorDiv.children).forEach(child => {
-                child.classList.remove("selected");
-                moodEmojis.forEach(m => child.classList.remove(m.class)); // Remover todas las clases de animación
-            });
+        emojiOption.addEventListener("click", (event) => {
+            event.stopPropagation(); // Prevent moodTrigger click from firing again
 
-            // Seleccionar el emoji actual y aplicar su animación
-            emojiSpan.classList.add("selected");
-            emojiSpan.classList.add(mood.class);
+            // Set the selected emoji on the trigger
+            moodTrigger.textContent = emojiOption.textContent;
+            moodTrigger.classList.add("selected-emoji"); // Style as selected emoji
+            moodTrigger.classList.remove("text-button"); // Remove text style if any
 
-            // Remover la clase de animación después de que termine para que pueda ser disparada de nuevo
-            emojiSpan.addEventListener('animationend', () => {
-                emojiSpan.classList.remove(mood.class);
-            }, { once: true }); // El evento se dispara solo una vez
+            // Apply selected emoji's animation
+            // First, remove any previous animations
+            moodEmojis.forEach(m => moodTrigger.classList.remove(m.class));
+            moodTrigger.classList.add(emojiOption.dataset.animationClass);
+            moodTrigger.addEventListener('animationend', () => {
+                moodTrigger.classList.remove(emojiOption.dataset.animationClass);
+            }, { once: true });
 
-            // Guardar el mood seleccionado en localStorage
+            // Hide the bubble
+            moodBubble.classList.remove("active");
+
+            // Save the selected mood in localStorage
             const savedData = JSON.parse(localStorage.getItem(materia.nombre)) || {};
-            savedData.mood = mood.emoji;
+            savedData.mood = emojiOption.textContent;
             localStorage.setItem(materia.nombre, JSON.stringify(savedData));
         });
-        moodSelectorDiv.appendChild(emojiSpan);
+        moodBubble.appendChild(emojiOption);
     });
-    tdMood.appendChild(moodSelectorDiv);
+
+    // Event listener to toggle the mood bubble
+    moodTrigger.addEventListener("click", (event) => {
+        event.stopPropagation(); // Prevent clicks from closing other bubbles
+
+        // Close any other open bubbles first
+        document.querySelectorAll('.mood-bubble.active').forEach(openBubble => {
+            if (openBubble !== moodBubble) { // Don't close self
+                openBubble.classList.remove('active');
+            }
+        });
+        
+        moodBubble.classList.toggle("active");
+    });
+
+    // Close bubble if clicked outside
+    document.addEventListener("click", (event) => {
+        if (!moodBubble.contains(event.target) && !moodTrigger.contains(event.target)) {
+            moodBubble.classList.remove("active");
+        }
+    });
+
+    tdMood.appendChild(moodTrigger);
+    tdMood.appendChild(moodBubble);
     // --- Fin Columna del Mood ---
 
 
@@ -178,12 +212,10 @@ for (const anio in agrupadoPorAnio) {
           tdNombre.classList.add("td-materia-promocionada");
       }
 
-      // Cargar y seleccionar el mood guardado
+      // Load and set the saved mood emoji
       if (data.mood) {
-          const selectedEmojiSpan = moodSelectorDiv.querySelector(`[data-emoji="${data.mood}"]`);
-          if (selectedEmojiSpan) {
-              selectedEmojiSpan.classList.add("selected");
-          }
+          moodTrigger.textContent = data.mood;
+          moodTrigger.classList.add("selected-emoji"); // Style as selected emoji
       }
     }
     // --- Fin de carga de datos ---
@@ -235,6 +267,7 @@ for (const anio in agrupadoPorAnio) {
       dataToSave.estado = tdEstado.textContent;
       dataToSave.notaFinal = tdFinal.textContent;
       dataToSave.fechaCierre = tdFecha.textContent;
+      // Mood is saved separately on emoji click
       localStorage.setItem(materia.nombre, JSON.stringify(dataToSave));
       
       updateProgressBar(); // Actualizar la barra de progreso
@@ -254,7 +287,7 @@ for (const anio in agrupadoPorAnio) {
   contenedor.appendChild(seccion);
 }
 
-updateProgressBar(); // Llamada inicial para cargar la barra de progreso al inicio
+updateProgressBar(); // Initial call to load progress bar
 
 
 
