@@ -1,37 +1,42 @@
 document.querySelectorAll('.materia-input').forEach(input => {
-  input.addEventListener('input', function () {
-    const value = this.value.trim();
-    const [nota1, nota2] = value.split('-').map(n => parseFloat(n));
-    const finalCell = this.parentElement.nextElementSibling;
-    const fechaCell = finalCell.nextElementSibling;
-    const promedioCell = fechaCell.nextElementSibling;
+  input.addEventListener('input', () => {
+    const fila = input.parentElement.parentElement;
+    const finalCell = fila.querySelector('.final');
+    const fechaCell = fila.querySelector('.fecha');
+    const promedioCell = fila.querySelector('.promedio');
 
-    finalCell.classList.remove('tachado');
+    const notasTexto = input.value.trim();
+    const partes = notasTexto.split('-');
+
+    if (partes.length === 2) {
+      const nota1 = parseFloat(partes[0]);
+      const nota2 = parseFloat(partes[1]);
+
+      if (!isNaN(nota1) && !isNaN(nota2)) {
+        const suma = nota1 + nota2;
+        const promedio = ((nota1 + nota2) / 2).toFixed(1);
+        promedioCell.textContent = promedio;
+
+        if (suma >= 14) {
+          finalCell.innerHTML = "<s>Promocionado</s>";
+          fechaCell.textContent = new Date().toLocaleDateString('es-AR');
+        } else if (promedio >= 4) {
+          finalCell.textContent = "Obligatorio";
+          fechaCell.textContent = new Date().toLocaleDateString('es-AR');
+        } else {
+          finalCell.textContent = "Desaprobado";
+          fechaCell.textContent = '';
+        }
+        return;
+      }
+    }
+
+    promedioCell.textContent = '';
     finalCell.textContent = '';
     fechaCell.textContent = '';
-    promedioCell.textContent = '';
-
-    if (!isNaN(nota1) && !isNaN(nota2)) {
-      const suma = nota1 + nota2;
-      const promedio = ((nota1 + nota2) / 2).toFixed(2);
-
-      if (suma >= 14) {
-        finalCell.textContent = 'Promocionado';
-        finalCell.classList.add('tachado');
-
-        const fecha = new Date();
-        const dia = fecha.getDate().toString().padStart(2, '0');
-        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-        const anio = fecha.getFullYear();
-        fechaCell.textContent = `${dia}/${mes}/${anio}`;
-      } else {
-        finalCell.textContent = 'Obligatorio';
-      }
-
-      promedioCell.textContent = promedio;
-    }
   });
 });
+
 
 
 
