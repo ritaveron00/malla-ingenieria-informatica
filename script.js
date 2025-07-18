@@ -32,7 +32,7 @@ const materias = [
   { anio: "Cuarto Año", nombre: "Sistemas Distribuidos I" },
 
   { anio: "Quinto Año", nombre: "Taller de Seguridad Informática" },
-   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
+  { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
   { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
@@ -104,7 +104,7 @@ for (const anio in agrupadoPorAnio) {
         tdEstado.classList.add("obligatoria");
       }
 
-      // NUEVO: Reaplicar clase de resaltado de materia si el promedio cumple la condición
+      // Reaplicar clase de resaltado de materia si el promedio cumple la condición
       const loadedPromedio = parseFloat(data.notaFinal);
       if (loadedPromedio >= 4 && loadedPromedio <= 10) {
           tdNombre.classList.add("td-materia-promocionada");
@@ -147,7 +147,7 @@ for (const anio in agrupadoPorAnio) {
         tdEstado.textContent = isPromocionada ? "Promocionada" : "Obligatoria";
         tdEstado.classList.add(isPromocionada ? "promocionada" : "obligatoria");
 
-        // NUEVO: Lógica para pintar SOLO la celda de "Materia" si el promedio está entre 4 y 10
+        // Lógica para pintar SOLO la celda de "Materia" si el promedio está entre 4 y 10
         if (promedio >= 4 && promedio <= 10) {
           tdNombre.classList.add("td-materia-promocionada");
         }
