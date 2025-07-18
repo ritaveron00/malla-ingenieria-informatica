@@ -25,7 +25,7 @@ body {
 /* Título principal */
 h1 {
   text-align: center;
-  margin: 30px auto;
+  margin: 30px auto 20px auto; /* Reducimos el margen inferior para la barra */
   font-family: 'Dancing Script', cursive;
   font-weight: 700;
   font-size: 3.8em;
@@ -34,6 +34,45 @@ h1 {
   max-width: 800px;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
+
+/* NUEVAS REGLAS PARA LA BARRA DE PROGRESO */
+.progress-container {
+    width: 90%; /* Ancho de la barra, adaptable */
+    max-width: 800px; /* Ancho máximo igual al título */
+    background-color: var(--color-3); /* Fondo de la barra (color claro) */
+    border-radius: 10px;
+    height: 25px; /* Altura de la barra */
+    overflow: hidden; /* Asegura que el relleno no se salga */
+    margin: 0 auto 30px auto; /* Centrar y añadir margen inferior */
+    border: 1px solid var(--color-2); /* Borde sutil */
+    position: relative;
+    display: flex;
+    align-items: center; /* Centra el texto verticalmente */
+    justify-content: center; /* Centra el texto horizontalmente inicialmente */
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%; /* Empezará en 0% y JavaScript lo actualizará */
+    background-color: var(--color-2); /* Color de relleno (marrón medio) */
+    border-radius: 10px;
+    transition: width 0.7s ease-in-out; /* Animación suave al cambiar el ancho */
+    position: absolute; /* Para que el texto se pueda superponer */
+    left: 0;
+    top: 0;
+}
+
+.progress-text {
+    position: relative; /* Para que esté por encima de la barra de relleno */
+    z-index: 1; /* Asegura que el texto esté visible */
+    color: var(--color-1); /* Color del texto del porcentaje */
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1em; /* Tamaño de fuente para el porcentaje */
+    font-weight: 600;
+    text-shadow: 0 0 5px rgba(255,255,255,0.7); /* Ligera sombra para visibilidad */
+}
+/* FIN NUEVAS REGLAS */
+
 
 .contenedor-principal {
   max-width: 960px;
@@ -45,7 +84,7 @@ h1 {
 
 .anio {
   margin-bottom: 40px;
-  background-color: var(--color-4); /* Fondo de la sección del año */
+  background-color: var(--color-4);
   border-radius: 12px;
   padding: 16px;
 }
@@ -69,9 +108,9 @@ table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  border-radius: 8px; /* Redondea las esquinas de la tabla */
-  overflow: hidden; /* Asegura que el contenido se recorte si sobresale de los bordes redondeados */
-  border: 1px solid var(--color-3); /* Borde exterior para la tabla */
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--color-3);
 }
 
 th {
@@ -82,13 +121,13 @@ th {
   font-family: 'Quicksand', sans-serif;
   font-weight: 600;
   font-size: 0.9em;
-  border: 1px solid var(--color-3); /* Bordes de los th */
+  border: 1px solid var(--color-3);
 }
 
 td {
-  background-color: var(--color-5); /* CAMBIO: Fondo por defecto para todas las celdas (antes transparente) */
+  background-color: var(--color-5);
   padding: 8px;
-  border: 1px solid var(--color-3); /* Bordes para todas las celdas */
+  border: 1px solid var(--color-3);
   text-align: center;
   vertical-align: middle;
   word-wrap: normal;
@@ -96,14 +135,14 @@ td {
   overflow: hidden;
   text-overflow: clip;
   font-family: 'Open Sans', sans-serif;
-  font-size: 0.95em; /* Mismo tamaño que la materia para todos los datos */
+  font-size: 0.95em;
   line-height: 1.3;
-  color: var(--color-1); /* CAMBIO: Color de texto para el contenido de los td */
+  color: var(--color-1);
 }
 
 /* Nombres de Materia (primer td) */
 td:first-child {
-  font-family: 'Quicksand', sans-serif; /* Fuente para el nombre de la materia */
+  font-family: 'Quicksand', sans-serif;
   font-weight: 500;
   width: 30%;
 }
@@ -113,15 +152,15 @@ input[type='text'] {
   width: 80%;
   padding: 6px;
   border: 1px solid var(--color-3);
-  border-radius: 6px;
-  background-color: transparent; /* CAMBIO: Fondo transparente para el input de notas */
+  border-radius: 6-px;
+  background-color: transparent;
   box-sizing: border-box;
   display: block;
   margin: 0 auto;
   font-family: 'Open Sans', sans-serif;
-  font-size: 0.95em; /* Mismo tamaño que los datos de las celdas */
+  font-size: 0.95em;
   text-align: center;
-  color: var(--color-1); /* CAMBIO: Color de texto para el input de notas */
+  color: var(--color-1);
 }
 
 input[type='text']:focus {
@@ -137,7 +176,7 @@ input[type='text']:focus {
 }
 
 .promocionada {
-  color: var(--color-2); /* Mismo color que 'obligatoria' */
+  color: var(--color-2);
 }
 
 .obligatoria {
@@ -146,7 +185,7 @@ input[type='text']:focus {
 
 /* Resalte de la Materia Promocionada */
 .td-materia-promocionada {
-  background-color: var(--color-aprobada-fondo); /* CAMBIO: Volvemos a usar background-color */
+  background-color: var(--color-aprobada-fondo);
   font-weight: bold;
 }
 
@@ -158,8 +197,17 @@ input[type='text']:focus {
 
   h1 {
     font-size: 2.8em;
-    margin: 15px auto;
+    margin: 15px auto 10px auto; /* Ajuste para móvil también */
     max-width: 100%;
+  }
+
+  /* Barra de progreso en móvil */
+  .progress-container {
+    height: 20px;
+    margin: 0 auto 20px auto;
+  }
+  .progress-text {
+    font-size: 0.9em;
   }
 
   .contenedor-principal {
