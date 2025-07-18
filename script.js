@@ -37,80 +37,89 @@ const materias = [
   { anio: "Quinto año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
 
-const tabla = document.getElementById("tabla-materias");
+const contenedor = document.getElementById("contenedor-tablas");
+const agrupadoPorAnio = {};
 
-let ultimoAnio = "";
+materias.forEach(m => {
+  if (!agrupadoPorAnio[m.anio]) agrupadoPorAnio[m.anio] = [];
+  agrupadoPorAnio[m.anio].push(m);
+});
 
-materias.forEach(materia => {
-  // Si es un nuevo año, insertamos un encabezado
-  if (materia.anio !== ultimoAnio) {
-    const grupoRow = document.createElement("tr");
-    const grupoCell = document.createElement("td");
-    grupoCell.textContent = materia.anio;
-    grupoCell.colSpan = 5;
-    grupoCell.classList.add("grupo-anio");
-    grupoRow.appendChild(grupoCell);
-    tabla.appendChild(grupoRow);
-    ultimoAnio = materia.anio;
-  }
+for (const anio in agrupadoPorAnio) {
+  const seccion = document.createElement("div");
+  seccion.className = "anio";
 
-  const row = document.createElement("tr");
+  const titulo = document.createElement("h2");
+  titulo.textContent = anio;
+  seccion.appendChild(titulo);
 
-  const input = document.createElement("input");
-  input.type = "text";
+  const tabla = document.createElement("table");
+  const thead = document.createElement("thead");
+  thead.innerHTML = `
+    <tr>
+      <th>Materia</th>
+      <th>Notas Parciales</th>
+      <th>Final</th>
+      <th>Fecha de Cierre</th>
+      <th>Nota Final</th>
+    </tr>
+  `;
+  tabla.appendChild(thead);
 
-  const estadoTd = document.createElement("td");
-  estadoTd.classList.add("estado");
+  const tbody = document.createElement("tbody");
 
-  const fechaTd = document.createElement("td");
-  const finalTd = document.createElement("td");
+  agrupadoPorAnio[anio].forEach(materia => {
+    const row = document.createElement("tr");
 
-  input.addEventListener("input", () => {
-    const val = input.value.trim();
-    const notas = val.split("-").map(n => parseInt(n));
+    const tdNombre = document.createElement("td");
+    tdNombre.textContent = materia.nombre;
 
-    if (notas.length === 2 && notas.every(n => !isNaN(n))) {
-      const suma = notas[0] + notas[1];
-      const promedio = (notas[0] + notas[1]) / 2;
+    const inputNotas = document.createElement("input");
+    inputNotas.type = "text";
+    inputNotas.placeholder = "";
+    const tdInput = document.createElement("td");
+    tdInput.appendChild(inputNotas);
 
-      // Estado
-      if (suma >= 14) {
-        estadoTd.textContent = "Promocionada";
-        estadoTd.className = "estado promocionada";
+    const tdEstado = document.createElement("td");
+    tdEstado.classList.add("estado");
+
+    const tdFecha = document.createElement("td");
+    const tdFinal = document.createElement("td");
+
+    inputNotas.addEventListener("input", () => {
+      const val = inputNotas.value.trim();
+      const partes = val.split("-").map(n => parseFloat(n));
+
+      if (partes.length === 2 && partes.every(n => !isNaN(n))) {
+        const suma = partes[0] + partes[1];
+        const promedio = (partes[0] + partes[1]) / 2;
+
+        tdEstado.textContent = suma >= 14 ? "Promocionada" : "Obligatoria";
+        tdEstado.className = "estado " + (suma >= 14 ? "promocionada" : "obligatoria");
+
+        tdFinal.textContent = promedio.toFixed(1);
+
+        tdFecha.textContent = promedio >= 4 ? new Date().toLocaleDateString("es-AR") : "";
       } else {
-        estadoTd.textContent = "Obligatoria";
-        estadoTd.className = "estado obligatoria";
+        tdEstado.textContent = "";
+        tdEstado.className = "estado";
+        tdFecha.textContent = "";
+        tdFinal.textContent = "";
       }
+    });
 
-      // Nota final
-      finalTd.textContent = promedio.toFixed(1);
-
-      // Fecha si promedio >= 4
-      if (promedio >= 4) {
-        const hoy = new Date().toLocaleDateString("es-AR");
-        fechaTd.textContent = hoy;
-      } else {
-        fechaTd.textContent = "";
-      }
-    } else {
-      estadoTd.textContent = "";
-      estadoTd.className = "estado";
-      finalTd.textContent = "";
-      fechaTd.textContent = "";
-    }
+    row.appendChild(tdNombre);
+    row.appendChild(tdInput);
+    row.appendChild(tdEstado);
+    row.appendChild(tdFecha);
+    row.appendChild(tdFinal);
+    tbody.appendChild(row);
   });
 
-  row.innerHTML = `
-    <td>${materia.nombre}</td>
-    <td></td>
-  `;
-  row.children[1].appendChild(input);
-  row.appendChild(estadoTd);
-  row.appendChild(fechaTd);
-  row.appendChild(finalTd);
-
-  tabla.appendChild(row);
-});
+  tabla.appendChild(tbody);
+  seccion.appendChild(tabla);
+  contenedor.appendChild(seccion);
+}
 
 
 
