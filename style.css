@@ -1,49 +1,50 @@
-:root {
-  --color-header: #8a724c;
-  --color-border: #b99668;
-  --color-bg: #f7f3e8;
-  --color-texto: #4b3e2e;
-  --verde-aprobado: #a3d9a5;
-  --fuente: 'Quicksand', sans-serif;
-}
-
 body {
-  background-color: var(--color-bg);
-  color: var(--color-texto);
-  font-family: var(--fuente), sans-serif;
+  font-family: Arial, sans-serif;
+  background-color: #f7f3e8;
+  color: #4b3e2e;
   padding: 20px;
 }
 
 h1 {
   text-align: center;
   margin-bottom: 30px;
-  color: var(--color-header);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95em;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
 }
 
 th, td {
-  border: 1px solid var(--color-border);
+  border: 1px solid #b99668;
   padding: 10px;
-  text-align: center;
+  text-align: left;
 }
 
 th {
-  background-color: var(--color-header);
+  background-color: #8a724c;
   color: white;
 }
 
-tr.materia.promocionada td:nth-child(2) {
-  text-decoration: line-through;
+.anio td {
+  background-color: #dcc9a7;
   font-weight: bold;
-  color: #1b512d;
-  background-color: var(--verde-aprobado);
+  text-transform: uppercase;
+  font-size: 1.1em;
 }
+
+input.materia-input {
+  width: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.tachado {
+  text-decoration: line-through;
+  color: gray;
+}
+
 
 
 
