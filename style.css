@@ -4,67 +4,130 @@
   --color-3: #DCC9A7;
   --color-4: #EDE2CC;
   --color-5: #F7F3E8;
-  --verde: #b1d6ab;
-  --rojo: #e3a8a8;
 }
 
 body {
-  font-family: 'Quicksand', sans-serif;
   background-color: var(--color-5);
-  padding: 20px;
-  color: #333;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--color-1);
+  display: flex;
+  justify-content: center;
 }
 
 h1 {
   text-align: center;
+  margin: 20px;
+  font-family: 'Georgia', serif;
+  font-weight: 400;
   color: var(--color-1);
-  margin-bottom: 30px;
+}
+
+.contenedor-principal {
+  max-width: 960px;
+  width: 95%;
+  padding: 20px;
+}
+
+.anio {
+  margin-bottom: 40px;
+  background-color: var(--color-4);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.anio h2 {
+  margin: 0 0 10px;
+  font-size: 1.2em;
+  color: var(--color-1);
+  border-bottom: 2px solid var(--color-2);
+  padding-bottom: 5px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-th, td {
-  border: 1px solid var(--color-3);
-  padding: 10px;
-  text-align: center;
 }
 
 th {
   background-color: var(--color-2);
   color: white;
-}
-
-input[type="text"] {
-  width: 70px;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid var(--color-3);
-  text-align: center;
-}
-
-td.estado.promocionada {
-  background-color: var(--verde);
-  font-weight: bold;
-}
-
-td.estado.obligatoria {
-  background-color: var(--rojo);
-  font-weight: bold;
-  color: white;
-}
-.grupo-anio {
-  background-color: var(--color-4);
-  font-weight: bold;
   text-align: left;
-  padding: 12px;
-  color: var(--color-1);
+  padding: 8px;
+  font-weight: normal;
+}
+
+td {
+  background-color: var(--color-5);
+  padding: 8px;
+  vertical-align: middle;
+}
+
+input[type='text'] {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid var(--color-3);
+  border-radius: 6px;
+  background-color: white;
+}
+
+.estado {
+  font-weight: bold;
+}
+
+.promocionada {
+  color: #4F7942; /* Verde musgo suave */
+}
+
+.obligatoria {
+  color: #AA5A44; /* Marrón rojizo */
+}
+
+tr:hover td {
+  background-color: var(--color-3);
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  body {
+    padding: 0 10px;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  th {
+    display: none;
+  }
+
+  td {
+    position: relative;
+    padding-left: 50%;
+    margin-bottom: 10px;
+  }
+
+  td::before {
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: bold;
+    color: var(--color-1);
+  }
+
+  td:nth-of-type(1)::before { content: "Materia"; }
+  td:nth-of-type(2)::before { content: "Notas Parciales"; }
+  td:nth-of-type(3)::before { content: "Final"; }
+  td:nth-of-type(4)::before { content: "Fecha de Cierre"; }
+  td:nth-of-type(5)::before { content: "Nota Final"; }
 }
 
 
