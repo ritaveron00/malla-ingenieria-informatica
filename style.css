@@ -130,16 +130,7 @@ tr:hover td {
   td:nth-of-type(5)::before { content: "Nota Final"; }
 }
 
-@media screen and (max-width: 768px) {
-  #malla {
-    flex-direction: column;
-    align-items: center;
-  }
 
-  .anio {
-    width: 90%;
-  }
-}
 
 
 
