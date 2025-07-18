@@ -1,11 +1,13 @@
 :root {
-  --color-1: #8A724C;
-  --color-2: #B99668;
-  --color-3: #DCC9A7;
-  --color-4: #EDE2CC;
-  --color-5: #F7F3E8;
-  --color-aprobada-fondo: #E6F0E0; /* Un verde muy claro para el fondo de la materia aprobada */
+  --color-1: #8A724C; /* Marrón oscuro */
+  --color-2: #B99668; /* Marrón medio */
+  --color-3: #DCC9A7; /* Marrón claro / Beige */
+  --color-4: #EDE2CC; /* Marrón muy claro / Crema */
+  --color-5: #F7F3E8; /* Blanco roto / Crema muy claro */
+
+  --color-aprobada-fondo: var(--color-4); /* Fondo para la materia aprobada (columna Materia) */
   --color-borde-foco: var(--color-2); /* Color del borde al seleccionar el input */
+  --color-resaltado-promedio: var(--color-3); /* Fondo para celdas con promedio 4-10 */
 }
 
 body {
@@ -30,7 +32,8 @@ h1 {
   max-width: 960px;
   width: 95%;
   padding: 20px;
-  box-sizing: border-box; /* Asegura que el padding se incluya en el ancho */
+  box-sizing: border-box;
+  /* Eliminamos overflow-x: auto; para evitar scroll horizontal en el contenedor principal */
 }
 
 .anio {
@@ -55,19 +58,24 @@ h1 {
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Esto es clave: fuerza a las columnas a tener el mismo ancho */
+  table-layout: fixed; /* Fuerza a las columnas a tener el mismo ancho */
 }
 
 th, td {
-  border-right: 1px solid var(--color-3);
-  word-wrap: break-word; /* Permite que el texto largo se rompa */
-  /* Centrar el contenido de las celdas (horizontal y verticalmente) */
+  border-right: 1px solid var(--color-3); /* Líneas verticales */
+  border-bottom: 1px solid var(--color-3); /* NUEVO: Líneas horizontales */
+  word-wrap: break-word;
   text-align: center;
   vertical-align: middle;
 }
 
 th:last-child, td:last-child {
   border-right: none;
+}
+
+/* Quita la línea inferior de la última fila para un mejor acabado */
+tr:last-child td {
+  border-bottom: none;
 }
 
 th {
@@ -83,86 +91,117 @@ td {
 }
 
 input[type='text'] {
-  width: 80%; /* Ajustado para que sea proporcional y se pueda centrar */
+  width: 80%;
   padding: 6px;
   border: 1px solid var(--color-3);
   border-radius: 6px;
   background-color: white;
   box-sizing: border-box;
-  display: block; /* Permite usar margin: auto para centrar */
-  margin: 0 auto; /* Centra el input horizontalmente */
+  display: block;
+  margin: 0 auto;
 }
 
 input[type='text']:focus {
-  outline: none; /* Elimina el contorno azul por defecto */
-  border-color: var(--color-borde-foco); /* Cambia el color del borde al seleccionar */
-  box-shadow: 0 0 5px rgba(185, 150, 104, 0.5); /* Opcional: una ligera sombra para énfasis */
+  outline: none;
+  border-color: var(--color-borde-foco);
+  box-shadow: 0 0 5px rgba(185, 150, 104, 0.5);
 }
 
 .estado {
   font-weight: bold;
 }
 
+/* NUEVO: Colores de texto para estados en tonos marrones */
 .promocionada {
-  color: #4F7942; /* Verde musgo suave */
+  color: var(--color-1); /* Marrón oscuro para promocionada */
 }
 
 .obligatoria {
-  color: #AA5A44; /* Marrón rojizo */
+  color: var(--color-2); /* Marrón medio para obligatoria */
 }
 
-/* Nueva regla: Estilo para la celda de "Materia" cuando la fila está promocionada */
-.promocionada-row .td-materia { /* Clase en la celda y en la fila */
+/* Estilo para la celda de "Materia" cuando la fila está promocionada */
+.promocionada-row .td-materia {
   background-color: var(--color-aprobada-fondo); /* Fondo suave cuando está aprobada */
-  font-weight: bold; /* Opcional: hacer el texto más notorio */
+  font-weight: bold;
+}
+
+/* NUEVO: Estilo para resaltar celdas cuando el promedio es 4-10 */
+.resaltado-promedio {
+  background-color: var(--color-resaltado-promedio);
 }
 
 
-/* Responsive (manteniendo los ajustes anteriores, sin apilar) */
+/* Responsive (Revertido a modo apilado para evitar scroll horizontal) */
 @media screen and (max-width: 600px) {
   body {
     padding: 0 10px;
   }
 
-  /*
-    Para que las columnas sean todas del mismo tamaño y no haya scroll,
-    incluso en móvil, necesitarás que el contenido sea muy conciso
-    o que la fuente sea muy pequeña.
-    Una forma de "forzar" que quepan es reducir el tamaño de fuente general
-    o del texto en las celdas, pero esto puede afectar la legibilidad.
-    Si la tabla no cabe horizontalmente, inevitablemente aparecerá un scroll horizontal.
-    Podemos permitir un scroll horizontal en la tabla para que no se "rompa" el layout.
-  */
-  .contenedor-principal {
-    overflow-x: auto; /* Permite scroll horizontal si el contenido es demasiado ancho */
-    -webkit-overflow-scrolling: touch; /* Mejora el scroll en iOS */
-  }
-
   table {
-    display: table; /* Asegura que la tabla se muestre como tal */
-    min-width: 600px; /* Un ancho mínimo para que las columnas tengan espacio, si no caben aparecerá el scroll */
-    width: auto; /* Permite que la tabla crezca más allá del 100% si es necesario */
+    width: 100%;
+    display: block; /* La tabla se comporta como un bloque */
+    border-bottom: none; /* Elimina el borde inferior de la tabla completa */
   }
 
-  th, td {
-    white-space: nowrap; /* Intenta mantener el contenido en una sola línea si es posible (cuidado con el desborde) */
-    padding: 8px 4px; /* Reducir padding horizontal para ganar espacio */
+  thead {
+    display: none; /* Oculta los encabezados originales */
   }
+
+  tbody {
+    display: block;
+  }
+
+  tr {
+    display: block; /* Cada fila se comporta como una "tarjeta" */
+    margin-bottom: 20px;
+    border: 1px solid var(--color-3); /* Borde para cada "tarjeta" de fila */
+    border-radius: 8px;
+    padding: 10px;
+    background-color: var(--color-4); /* Fondo para cada "tarjeta" de fila */
+  }
+
+  td {
+    display: block; /* Cada celda se convierte en un bloque vertical */
+    position: relative;
+    padding-left: 50%; /* Espacio para el label ::before */
+    margin-bottom: 5px;
+    border-right: none; /* Elimina bordes verticales entre celdas apiladas */
+    border-bottom: none; /* Elimina bordes horizontales entre celdas apiladas */
+    background-color: var(--color-5); /* Fondo de la celda individual */
+    border-radius: 4px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    word-wrap: break-word;
+    text-align: left; /* Alineación del texto a la izquierda en modo apilado */
+  }
+
+  td::before {
+    position: absolute;
+    left: 10px;
+    width: 40%;
+    white-space: nowrap;
+    font-weight: bold;
+    color: var(--color-1);
+    content: attr(data-label); /* Usa un atributo data-label para los encabezados */
+  }
+
+  /* Asigna los data-label para cada celda (se usarán en el HTML si se implementa, o con nth-of-type en CSS) */
+  td:nth-of-type(1)::before { content: "Materia:"; }
+  td:nth-of-type(2)::before { content: "Notas Parciales:"; }
+  td:nth-of-type(3)::before { content: "Final:"; }
+  td:nth-of-type(4)::before { content: "Fecha de Cierre:"; }
+  td:nth-of-type(5)::before { content: "Nota Final:"; }
 
   input[type='text'] {
-    width: 90%; /* Ajuste para el tamaño reducido de la columna */
+    width: calc(100% - 12px); /* Ajusta el ancho para el padding */
+    margin-left: 6px;
+    margin-right: 6px;
   }
 
-  /*
-    Quitamos las reglas que "apilan" la tabla, ya que el objetivo es ver todas las columnas.
-    Si el contenido es largo, aparecerá el scroll horizontal en .contenedor-principal.
-  */
-  /* th { display: table-cell; } */
-  /* td { display: table-cell; } */
-  /* tr { display: table-row; } */
-  /* thead, tbody { display: table-row-group; } */
-  td::before {
-    content: none; /* Elimina los labels que se muestran al apilar */
+  /* Quita el borde inferior de la última celda en cada "tarjeta" de fila */
+  tr td:last-child {
+    border-bottom: none;
   }
 }
 
