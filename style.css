@@ -9,9 +9,10 @@
   --color-borde-foco: var(--color-2); /* Color del borde al seleccionar el input */
 }
 
+/* Aplicamos Open Sans como fuente base para la mayoría del texto */
 body {
   background-color: var(--color-5);
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Open Sans', sans-serif; /* Fuente base */
   margin: 0;
   padding: 0;
   color: var(--color-1);
@@ -19,11 +20,13 @@ body {
   justify-content: center;
 }
 
+/* Título principal */
 h1 {
   text-align: center;
   margin: 20px;
-  font-family: 'Georgia', serif;
-  font-weight: 400;
+  font-family: 'Playfair Display', serif; /* Fuente principal para el título */
+  font-weight: 700; /* Un poco más de peso para que destaque */
+  font-size: 2.5em; /* Tamaño grande para el título */
   color: var(--color-1);
 }
 
@@ -39,31 +42,31 @@ h1 {
   background-color: var(--color-4);
   border-radius: 12px;
   padding: 16px;
-  /* El overflow-x ahora se aplica a un nuevo div dentro de .anio en el JS si es necesario,
-     o se gestiona directamente en la tabla con un min-width */
 }
 
 .anio:hover {
   box-shadow: none;
 }
 
+/* Títulos de Año */
 .anio h2 {
   margin: 0 0 10px;
-  font-size: 1.2em;
+  font-family: 'Lora', serif; /* Fuente para el año */
+  font-size: 1.8em; /* Tamaño de letra para el año */
   color: var(--color-1);
   border-bottom: 2px solid var(--color-2);
   padding-bottom: 5px;
 }
 
 table {
-  width: 100%; /* Aseguramos que la tabla ocupe el 100% del espacio disponible */
+  width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Esto es clave: fuerza a las columnas a tener el mismo ancho */
+  table-layout: fixed;
 }
 
 th, td {
-  border-right: 1px solid var(--color-3); /* Líneas verticales */
-  border-bottom: 1px solid var(--color-3); /* Líneas horizontales */
+  border-right: 1px solid var(--color-3);
+  border-bottom: 1px solid var(--color-3);
   word-wrap: break-word;
   text-align: center;
   vertical-align: middle;
@@ -73,22 +76,39 @@ th:last-child, td:last-child {
   border-right: none;
 }
 
-/* Quita la línea inferior de la última fila para un mejor acabado */
 tr:last-child td {
   border-bottom: none;
 }
 
+/* Encabezados de Columna */
 th {
   background-color: var(--color-2);
   color: white;
+  text-align: center; /* Centrar los encabezados */
   padding: 8px;
-  font-weight: normal;
+  font-family: 'Montserrat', sans-serif; /* Fuente para encabezados de columna */
+  font-weight: 600; /* Un poco más de peso */
+  font-size: 0.95em; /* Tamaño para los encabezados */
 }
 
 td {
   background-color: var(--color-5);
   padding: 8px;
 }
+
+/* Nombres de Materia */
+td:first-child { /* Esta es la columna 'Materia' */
+  font-family: 'Montserrat', sans-serif; /* Fuente para los nombres de materia */
+  font-weight: 500; /* Peso medio */
+  font-size: 1.05em; /* Un poco más grande para el nombre de la materia */
+}
+
+/* Contenido de las demás columnas (Notas Parciales, Final, Fecha de Cierre, Nota Final) */
+td:not(:first-child) { /* Todas las celdas que no son la primera (Materia) */
+  font-family: 'Open Sans', sans-serif; /* Fuente para el contenido numérico y de fecha */
+  font-size: 0.9em; /* Tamaño ligeramente menor para los datos */
+}
+
 
 input[type='text'] {
   width: 80%;
@@ -99,6 +119,8 @@ input[type='text'] {
   box-sizing: border-box;
   display: block;
   margin: 0 auto;
+  font-family: 'Open Sans', sans-serif; /* Aseguramos que el input use la fuente de contenido */
+  font-size: 0.9em; /* Mismo tamaño que el contenido de las celdas */
 }
 
 input[type='text']:focus {
@@ -108,27 +130,32 @@ input[type='text']:focus {
 }
 
 .estado {
-  font-weight: bold;
+  font-weight: bold; /* Mantenemos negrita para Promocionada/Obligatoria */
 }
 
 .promocionada {
-  color: var(--color-1); /* Marrón oscuro para promocionada */
+  color: var(--color-1);
 }
 
 .obligatoria {
-  color: var(--color-2); /* Marrón medio para obligatoria */
+  color: var(--color-2);
 }
 
-/* Estilo para la celda de "Materia" cuando está promocionada */
 .td-materia-promocionada {
-  background-color: var(--color-aprobada-fondo); /* Fondo suave cuando está aprobada */
-  font-weight: bold;
+  background-color: var(--color-aprobada-fondo);
+  font-weight: bold; /* Mantenemos negrita para que la materia resaltada destaque */
 }
 
-/* Responsive (Manteniendo las columnas y el scroll horizontal, pero mejorando el contenedor) */
+/* Responsive (Manteniendo las columnas y el scroll horizontal) */
 @media screen and (max-width: 600px) {
   body {
     padding: 0 5px;
+  }
+
+  /* Ajuste para el título en móvil */
+  h1 {
+    font-size: 1.8em; /* Un poco más pequeño para pantallas chicas */
+    margin: 15px 0;
   }
 
   .contenedor-principal {
@@ -138,38 +165,51 @@ input[type='text']:focus {
   }
 
   .anio {
-    padding: 0; /* Eliminamos el padding aquí para que el fondo se extienda al borde de las columnas */
-    overflow-x: auto; /* El scroll horizontal se aplica al .anio */
+    padding: 0;
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
   .anio h2 {
-    padding: 16px 16px 5px; /* Devolvemos el padding solo al título para que no se pegue al borde */
+    padding: 16px 16px 5px;
     margin-bottom: 10px;
+    font-size: 1.5em; /* Un poco más pequeño para el año en móvil */
   }
 
   table {
-    min-width: 550px; /* Ancho mínimo para la tabla, si es menor, habrá scroll */
-    width: 100%; /* La tabla intenta ocupar el 100% del .anio con min-width */
-    border-collapse: collapse; /* Mantenemos el border-collapse */
-    table-layout: fixed; /* Mantenemos el table-layout: fixed */
-    display: table; /* Aseguramos que se comporte como tabla */
+    min-width: 550px;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    display: table;
   }
 
   th, td {
-    padding: 8px 4px; /* Reducimos el padding de las celdas */
-    font-size: 0.85em; /* Reducimos un poco el tamaño de la fuente */
-    white-space: normal; /* Permitir que el texto se rompa */
-    box-sizing: border-box; /* Aseguramos que el padding y borde no aumenten el ancho de la celda */
+    padding: 8px 4px;
+    font-size: 0.8em; /* Reducimos aún más el tamaño de fuente en móvil */
+    white-space: normal;
+    box-sizing: border-box;
   }
 
-  /* Aseguramos que los inputs se ajusten bien */
+  /* Ajustamos tamaños de texto para móvil para mantener la legibilidad */
+  th {
+    font-size: 0.85em;
+  }
+  td:first-child {
+    font-size: 0.95em;
+  }
+  td:not(:first-child) {
+    font-size: 0.8em;
+  }
+  input[type='text'] {
+    font-size: 0.8em;
+  }
+
   input[type='text'] {
     width: 95%;
     padding: 5px;
   }
 
-  /* Aseguramos que las cabeceras y celdas se comporten como tabla-cell */
   th, td {
       display: table-cell;
   }
