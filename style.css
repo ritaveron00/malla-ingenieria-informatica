@@ -7,7 +7,7 @@
 
   --color-aprobada-fondo: var(--color-4); /* Fondo para la materia aprobada (columna Materia) */
   --color-borde-foco: var(--color-2); /* Color del borde al seleccionar el input */
-  --color-resaltado-promedio: var(--color-3); /* Fondo para celdas con promedio 4-10 */
+  /* Eliminamos --color-resaltado-promedio ya que solo se resalta la materia */
 }
 
 body {
@@ -33,7 +33,7 @@ h1 {
   width: 95%;
   padding: 20px;
   box-sizing: border-box;
-  /* Eliminamos overflow-x: auto; para evitar scroll horizontal en el contenedor principal */
+  /* Permitimos scroll horizontal solo para la tabla */
 }
 
 .anio {
@@ -58,12 +58,12 @@ h1 {
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Fuerza a las columnas a tener el mismo ancho */
+  table-layout: fixed; /* Fuerza a las columnas a tener un ancho fijo */
 }
 
 th, td {
   border-right: 1px solid var(--color-3); /* Líneas verticales */
-  border-bottom: 1px solid var(--color-3); /* NUEVO: Líneas horizontales */
+  border-bottom: 1px solid var(--color-3); /* Líneas horizontales */
   word-wrap: break-word;
   text-align: center;
   vertical-align: middle;
@@ -111,7 +111,6 @@ input[type='text']:focus {
   font-weight: bold;
 }
 
-/* NUEVO: Colores de texto para estados en tonos marrones */
 .promocionada {
   color: var(--color-1); /* Marrón oscuro para promocionada */
 }
@@ -120,88 +119,60 @@ input[type='text']:focus {
   color: var(--color-2); /* Marrón medio para obligatoria */
 }
 
-/* Estilo para la celda de "Materia" cuando la fila está promocionada */
-.promocionada-row .td-materia {
+/* Estilo para la celda de "Materia" cuando está promocionada */
+.td-materia-promocionada { /* Nueva clase para el resaltado de la celda de materia */
   background-color: var(--color-aprobada-fondo); /* Fondo suave cuando está aprobada */
   font-weight: bold;
 }
 
-/* NUEVO: Estilo para resaltar celdas cuando el promedio es 4-10 */
-.resaltado-promedio {
-  background-color: var(--color-resaltado-promedio);
-}
+/* Eliminamos la clase .resaltado-promedio ya que solo se resalta la materia */
 
 
-/* Responsive (Revertido a modo apilado para evitar scroll horizontal) */
+/* Responsive (manteniendo la tabla como columnas con scroll horizontal si es necesario) */
 @media screen and (max-width: 600px) {
   body {
-    padding: 0 10px;
+    padding: 0 5px; /* Reducimos el padding general para más espacio */
+  }
+
+  .contenedor-principal {
+    width: 100%; /* El contenedor ocupa todo el ancho disponible */
+    padding: 10px; /* Reducimos el padding del contenedor */
+    box-sizing: border-box;
+    /* Movemos el overflow-x a la tabla misma o a un contenedor de la tabla
+       para que solo la tabla tenga scroll y no todo el principal */
+  }
+
+  .anio {
+    padding: 10px; /* Reducimos el padding de los contenedores de año */
   }
 
   table {
-    width: 100%;
-    display: block; /* La tabla se comporta como un bloque */
-    border-bottom: none; /* Elimina el borde inferior de la tabla completa */
+    min-width: 550px; /* Ancho mínimo para la tabla para que no se vea demasiado comprimida */
+    width: auto; /* La tabla puede crecer más allá del 100% */
+    display: block; /* La tabla se comporta como un bloque para permitir el scroll */
+    overflow-x: auto; /* Permite scroll horizontal en la tabla */
+    -webkit-overflow-scrolling: touch; /* Mejora el scroll en iOS */
   }
 
-  thead {
-    display: none; /* Oculta los encabezados originales */
+  th, td {
+    padding: 8px 4px; /* Reducimos el padding de las celdas para que el contenido quepa mejor */
+    font-size: 0.85em; /* Reducimos un poco el tamaño de la fuente para que quepa más */
+    white-space: normal; /* Permitir que el texto se rompa en líneas si es necesario */
   }
 
-  tbody {
-    display: block;
+  /* Aseguramos que los inputs se ajusten bien */
+  input[type='text'] {
+    width: 95%; /* Un poco más de ancho para el input en móvil */
+    padding: 5px;
   }
 
-  tr {
-    display: block; /* Cada fila se comporta como una "tarjeta" */
-    margin-bottom: 20px;
-    border: 1px solid var(--color-3); /* Borde para cada "tarjeta" de fila */
-    border-radius: 8px;
-    padding: 10px;
-    background-color: var(--color-4); /* Fondo para cada "tarjeta" de fila */
-  }
-
-  td {
-    display: block; /* Cada celda se convierte en un bloque vertical */
-    position: relative;
-    padding-left: 50%; /* Espacio para el label ::before */
-    margin-bottom: 5px;
-    border-right: none; /* Elimina bordes verticales entre celdas apiladas */
-    border-bottom: none; /* Elimina bordes horizontales entre celdas apiladas */
-    background-color: var(--color-5); /* Fondo de la celda individual */
-    border-radius: 4px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    word-wrap: break-word;
-    text-align: left; /* Alineación del texto a la izquierda en modo apilado */
+  /* Eliminamos las reglas de apilamiento */
+  table, thead, tbody, th, td, tr {
+    display: revert; /* Vuelve al comportamiento por defecto de la tabla */
   }
 
   td::before {
-    position: absolute;
-    left: 10px;
-    width: 40%;
-    white-space: nowrap;
-    font-weight: bold;
-    color: var(--color-1);
-    content: attr(data-label); /* Usa un atributo data-label para los encabezados */
-  }
-
-  /* Asigna los data-label para cada celda (se usarán en el HTML si se implementa, o con nth-of-type en CSS) */
-  td:nth-of-type(1)::before { content: "Materia:"; }
-  td:nth-of-type(2)::before { content: "Notas Parciales:"; }
-  td:nth-of-type(3)::before { content: "Final:"; }
-  td:nth-of-type(4)::before { content: "Fecha de Cierre:"; }
-  td:nth-of-type(5)::before { content: "Nota Final:"; }
-
-  input[type='text'] {
-    width: calc(100% - 12px); /* Ajusta el ancho para el padding */
-    margin-left: 6px;
-    margin-right: 6px;
-  }
-
-  /* Quita el borde inferior de la última celda en cada "tarjeta" de fila */
-  tr td:last-child {
-    border-bottom: none;
+    content: none; /* Eliminamos los labels que se mostraban al apilar */
   }
 }
 
