@@ -74,7 +74,7 @@ h1 {
   width: 95%;
   padding: 20px;
   box-sizing: border-box;
-  flex-grow: 1;
+  flex-grow: 1; 
 }
 
 .seccion-anio {
@@ -176,6 +176,41 @@ input:focus {
   font-weight: bold;
 }
 
+footer {
+    width: 100%;
+    margin-top: 40px; 
+    padding: 20px 0;
+    text-align: center;
+    background-color: var(--color-4); 
+    color: var(--color-1); 
+    font-family: 'Quicksand', sans-serif; 
+    font-size: 0.85em;
+    border-top: 1px solid var(--color-3); 
+}
+
+.pie-pagina-contenido {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; 
+    opacity: 0.7; 
+    transition: opacity 0.3s ease; 
+}
+
+.pie-pagina-contenido:hover {
+    opacity: 1; 
+
+.pie-pagina-contenido .fab.fa-instagram {
+    color: var(--color-2); 
+    font-size: 1.2em; 
+}
+
+.pie-pagina-contenido .pie-pagina-texto {
+    color: var(--color-1);
+    font-weight: 500;
+}
+
+
 @media screen and (max-width: 600px) {
   body {
     padding: 0 5px;
@@ -245,6 +280,16 @@ input:focus {
 
   th, td {
       display: table-cell;
+  }
+
+  footer {
+      margin-top: 30px;
+      padding: 15px 0;
+      font-size: 0.75em; 
+  }
+
+  .pie-pagina-contenido .fab.fa-instagram {
+      font-size: 1em; 
   }
 }
 
