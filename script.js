@@ -14,7 +14,7 @@ const materias = [
   { anio: "Tercer Año", nombre: "Probabilidad y Estadística" },
   { anio: "Tercer Año", nombre: "Teoría de Algoritmos" },
   { anio: "Tercer Año", nombre: "Sistemas Operativos" },
-  { anio: "Tercer Año", "nombre": "Paradigmas de Programación" },
+  { anio: "Tercer Año", nombre: "Paradigmas de Programación" },
   { anio: "Tercer Año", nombre: "Base de Datos" },
   { anio: "Tercer Año", nombre: "Modelación Numérica" },
   { anio: "Tercer Año", nombre: "Taller de Programación" },
@@ -126,8 +126,8 @@ for (const anio in agrupadoPorAnio) {
     }
     inputNotas.addEventListener("input", () => {
       const valor = inputNotas.value.trim();
-      let promedioCalculado = NaN;
-      let notaFinalRedondeada = NaN;
+      let promedioCalculadoSinRedondeo = NaN;
+      let notaFinalRedondeadaParaMostrar = NaN;
       let esPromocionada = false;
 
       celdaNombre.classList.remove("celda-materia-aprobada");
@@ -139,18 +139,25 @@ for (const anio in agrupadoPorAnio) {
         celdaFinal.textContent = "";
         celdaFecha.textContent = "";
       } else if (partes.length === 1 && !isNaN(partes[0])) {
-        promedioCalculado = partes[0];
-        notaFinalRedondeada = aplicarRedondeoUBAXXI(promedioCalculado);
-        esPromocionada = (notaFinalRedondeada >= 7 && promedioCalculado >= 6.5);
+        promedioCalculadoSinRedondeo = partes[0];
+        notaFinalRedondeadaParaMostrar = aplicarRedondeoUBAXXI(promedioCalculadoSinRedondeo);
+        // Lógica de promoción para una sola nota, si aplica (ej. examen único que promociona con 7)
+        esPromocionada = (promedioCalculadoSinRedondeo >= 7); // Asumiendo que con 7 directo promociona
       } else if (partes.length === 2 && partes.every(n => !isNaN(n))) {
         const nota1 = partes[0];
         const nota2 = partes[1];
 
+        promedioCalculadoSinRedondeo = (nota1 + nota2) / 2;
+        notaFinalRedondeadaParaMostrar = aplicarRedondeoUBAXXI(promedioCalculadoSinRedondeo);
+
+        // Lógica de promoción UBA XXI: promedio 7+ Y ninguna nota < 6
+        esPromocionada = (promedioCalculadoSinRedondeo >= 6.5 && nota1 >= 6 && nota2 >= 6); // 6.5 redondea a 7 y promociona
+
+        // Prioridad: si alguna nota es menor a 4, no regulariza/promociona
         if (nota1 < 4 || nota2 < 4) {
-            notaFinalRedondeada = Math.min(nota1, nota2);
             celdaEstado.textContent = "Libre/Recupera";
             celdaEstado.classList.add("obligatoria");
-            celdaFinal.textContent = notaFinalRedondeada.toFixed(1);
+            celdaFinal.textContent = notaFinalRedondeadaParaMostrar.toFixed(0); // Mostrar el redondeo aunque sea bajo
             celdaFecha.textContent = "";
             const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
             datosAGuardar.notas = valor;
@@ -161,30 +168,25 @@ for (const anio in agrupadoPorAnio) {
             actualizarBarraProgreso();
             return;
         }
-        
-        promedioCalculado = (nota1 + nota2) / 2;
-        notaFinalRedondeada = aplicarRedondeoUBAXXI(promedioCalculado);
-
-        esPromocionada = (notaFinalRedondeada >= 7 && nota1 >= 6 && nota2 >= 6);
 
       }
 
-      if (!isNaN(promedioCalculado)) {
-        celdaFinal.textContent = notaFinalRedondeada.toFixed(0);
-        celdaFecha.textContent = notaFinalRedondeada >= 4 ? new Date().toLocaleDateString("es-AR") : "";
+      if (!isNaN(promedioCalculadoSinRedondeo)) {
+        celdaFinal.textContent = notaFinalRedondeadaParaMostrar.toFixed(0);
+        celdaFecha.textContent = notaFinalRedondeadaParaMostrar >= 4 ? new Date().toLocaleDateString("es-AR") : "";
 
         if (esPromocionada) {
             celdaEstado.textContent = "Promocionada";
             celdaEstado.classList.add("promocionada");
-        } else if (notaFinalRedondeada >= 4) {
+        } else if (notaFinalRedondeadaParaMostrar >= 4) {
             celdaEstado.textContent = "Final";
             celdaEstado.classList.add("obligatoria");
         } else {
-            celdaEstado.textContent = "Libre/Recupera";
+            celdaEstado.textContent = "Libre/Recupera"; // Por ejemplo, un 3.5 que se redondea a 3
             celdaEstado.classList.add("obligatoria");
         }
         
-        if (notaFinalRedondeada >= 4 && notaFinalRedondeada <= 10) {
+        if (notaFinalRedondeadaParaMostrar >= 4 && notaFinalRedondeadaParaMostrar <= 10) {
           celdaNombre.classList.add("celda-materia-aprobada");
         }
       } else {
@@ -214,8 +216,6 @@ for (const anio in agrupadoPorAnio) {
   contenedorPrincipal.appendChild(seccion);
 }
 actualizarBarraProgreso();
-
-
 
 
 
