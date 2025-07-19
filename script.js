@@ -28,8 +28,8 @@ const materias = [
   { anio: "Cuarto Año", nombre: "Ingeniería de Software II" },
   { anio: "Cuarto Año", nombre: "Sistemas Distribuidos I" },
   { anio: "Quinto Año", nombre: "Taller de Seguridad Informática" },
-  { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
+  { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
 
