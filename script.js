@@ -103,8 +103,8 @@ function inicializarTablas() {
 
             const inputNotasParciales = document.createElement("input");
             inputNotasParciales.type = "text";
-            inputNotasParciales.placeholder = ""; // Vacío
-            inputNotasParciales.classList.add("notas-parciales-input"); // Para mantener estilos si tienes específicos
+            inputNotasParciales.placeholder = ""; 
+            inputNotasParciales.classList.add("notas-parciales-input"); 
             const celdaInputParciales = document.createElement("td");
             celdaInputParciales.appendChild(inputNotasParciales);
             
@@ -113,11 +113,9 @@ function inicializarTablas() {
             const celdaFecha = document.createElement("td");
             const celdaNotaFinal = document.createElement("td");
             
-            // CAMBIO: type="text", SIN placeholder, SIN min/max/step
             const inputNotaFinalManual = document.createElement("input");
             inputNotaFinalManual.type = "text"; 
-            inputNotaFinalManual.value = ""; // Asegura que esté vacío por defecto
-            //inputNotaFinalManual.classList.add("notas-parciales-input"); // Removida, ya que input[type='text'] la cubre
+            inputNotaFinalManual.value = ""; 
 
             const spanNotaFinalEstatica = document.createElement("span");
             spanNotaFinalEstatica.style.display = "none"; 
@@ -125,7 +123,6 @@ function inicializarTablas() {
             celdaNotaFinal.appendChild(inputNotaFinalManual);
             celdaNotaFinal.appendChild(spanNotaFinalEstatica);
             
-            // Cargar datos guardados al inicio
             const datosGuardados = localStorage.getItem(materia.nombre);
             if (datosGuardados) {
                 const datos = JSON.parse(datosGuardados);
@@ -142,7 +139,7 @@ function inicializarTablas() {
                     celdaEstado.classList.add("promocionada");
                 } else { 
                     inputNotaFinalManual.style.display = "block";
-                    inputNotaFinalManual.value = datos.notaFinal || ""; // Cargar valor guardado
+                    inputNotaFinalManual.value = datos.notaFinal || ""; 
                     spanNotaFinalEstatica.style.display = "none";
                     if (datos.estado === "Obligatoria" || datos.estado === "Recursar") {
                         celdaEstado.classList.add("obligatoria");
@@ -154,7 +151,6 @@ function inicializarTablas() {
                 }
             }
 
-            // Event listener para las Notas Parciales
             inputNotasParciales.addEventListener("input", () => {
                 const valor = inputNotasParciales.value.trim();
                 let promedioCalculadoSinRedondeo = NaN;
@@ -227,14 +223,12 @@ function inicializarTablas() {
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                 datosAGuardar.notas = valor;
                 datosAGuardar.estado = celdaEstado.textContent;
-                // Guarda el valor del input si está visible, o el texto del span si no
                 datosAGuardar.notaFinal = (inputNotaFinalManual.style.display === "block") ? inputNotaFinalManual.value : spanNotaFinalEstatica.textContent;
                 datosAGuardar.fechaCierre = fechaParaGuardar;
                 localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
                 actualizarBarraProgreso();
             });
 
-            // Event listener para el input de la nota final manual
             inputNotaFinalManual.addEventListener("input", () => {
                 const notaManual = inputNotaFinalManual.value.trim();
                 const notaNumericaManual = parseFloat(notaManual);
@@ -251,7 +245,7 @@ function inicializarTablas() {
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                 datosAGuardar.notas = inputNotasParciales.value;
                 datosAGuardar.estado = celdaEstado.textContent;
-                datosAGuardar.notaFinal = notaManual; // Guarda el valor directamente del input
+                datosAGuardar.notaFinal = notaManual; 
                 datosAGuardar.fechaCierre = fechaParaGuardar;
                 
                 localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
