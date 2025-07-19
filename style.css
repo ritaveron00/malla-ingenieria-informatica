@@ -1,21 +1,19 @@
 :root {
-  --color-1: #8A724C; /* Marrón oscuro (para texto principal, promocionada/obligatoria) */
-  --color-2: #B99668; /* Marrón medio (para encabezados de tabla, bordes, foco) */
-  --color-3: #DCC9A7; /* Marrón claro / Beige (para bordes de celda) */
-  --color-4: #EDE2CC; /* Marrón muy claro / Crema (para fondo de sección de año y materias promocionadas) */
-  --color-5: #F7F3E8; /* Blanco roto / Crema muy claro (para fondo principal del body) */
-
-  --color-aprobada-fondo: var(--color-4); /* Fondo para la materia aprobada (columna Materia) */
-  --color-borde-foco: var(--color-2); /* Color del borde al seleccionar el input */
+  --color-1: #8A724C;
+  --color-2: #B99668;
+  --color-3: #DCC9A7;
+  --color-4: #EDE2CC;
+  --color-5: #F7F3E8;
+  --color-aprobada-fondo: var(--color-4);
+  --color-borde-foco: var(--color-2);
 }
 
-/* Aplicamos Open Sans como fuente base para la mayoría del texto */
 body {
   background-color: var(--color-5);
-  font-family: 'Open Sans', sans-serif; /* Fuente base */
+  font-family: 'Open Sans', sans-serif;
   margin: 0;
   padding: 0;
-  color: var(--color-1); /* Color de texto base (marrón oscuro) */
+  color: var(--color-1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,7 +21,6 @@ body {
   position: relative;
 }
 
-/* Título principal */
 h1 {
   text-align: center;
   margin: 30px auto 20px auto;
@@ -36,8 +33,7 @@ h1 {
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-/* REGLAS PARA LA BARRA DE PROGRESO */
-.progress-container {
+.contenedor-progreso {
     width: 90%;
     max-width: 800px;
     background-color: var(--color-3);
@@ -52,7 +48,7 @@ h1 {
     justify-content: center;
 }
 
-.progress-bar {
+.barra-progreso {
     height: 100%;
     width: 0%;
     background-color: var(--color-2);
@@ -63,7 +59,7 @@ h1 {
     top: 0;
 }
 
-.progress-text {
+.texto-progreso {
     position: relative;
     z-index: 1;
     color: var(--color-1);
@@ -72,8 +68,6 @@ h1 {
     font-weight: 600;
     text-shadow: 0 0 5px rgba(255,255,255,0.7);
 }
-/* FIN REGLAS DE BARRA DE PROGRESO */
-
 
 .contenedor-principal {
   max-width: 960px;
@@ -83,15 +77,14 @@ h1 {
   flex-grow: 1;
 }
 
-.anio {
+.seccion-anio {
   margin-bottom: 40px;
   background-color: var(--color-4);
   border-radius: 12px;
   padding: 16px;
 }
 
-/* Títulos de Año */
-.anio h2 {
+.seccion-anio h2 {
   margin: 0 0 10px;
   font-family: 'Dancing Script', cursive;
   font-weight: 700;
@@ -137,146 +130,12 @@ td {
   color: var(--color-1);
 }
 
-/* Nombres de Materia (primer td) */
 td:first-child {
   font-family: 'Quicksand', sans-serif;
   font-weight: 500;
-  width: 25%; /* Ajustado para dar espacio a la nueva columna */
+  width: 25%;
 }
 
-/* NEW: Styles for Mood Button and Bubble */
-/* mood-container inside td no longer needs position: relative */
-.mood-container {
-    display: flex; /* To center content */
-    justify-content: center;
-    align-items: center;
-    height: 100%; /* Ensure it fills the cell height */
-    width: 100%;
-}
-
-.mood-trigger {
-    font-size: 1.5em; /* Size of the default emoji or button text */
-    cursor: pointer;
-    background-color: transparent;
-    border: 1px solid var(--color-3); /* Border like input */
-    border-radius: 6px; /* Rounded corners */
-    padding: 5px 8px; /* Padding for clickability */
-    transition: all 0.2s ease-in-out;
-    color: var(--color-1); /* Text color for 'Select' */
-    min-width: 50px; /* Ensure button has some width */
-    height: 35px; /* Fixed height for consistency */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box; /* Include padding/border in width/height */
-}
-
-.mood-trigger:hover {
-    border-color: var(--color-borde-foco);
-    box-shadow: 0 0 5px rgba(185, 150, 104, 0.5); /* Shadow like input focus */
-    transform: translateY(-1px); /* Slight lift */
-}
-
-.mood-trigger.selected-emoji {
-    font-size: 1.8em; /* Slightly larger for selected emoji */
-    border: none; /* No border when an emoji is selected */
-    background-color: transparent;
-    box-shadow: none;
-    padding: 0; /* No padding needed */
-    width: auto; /* Width adapts to emoji */
-    min-width: unset;
-}
-.mood-trigger.selected-emoji:hover {
-    transform: scale(1.1); /* Only scale for selected emoji hover */
-    box-shadow: none; /* No shadow */
-}
-
-/* The mood-bubble is now globally positioned */
-.mood-bubble {
-    position: fixed; /* Position fixed relative to viewport */
-    display: flex;
-    flex-wrap: nowrap; /* Keep emojis in one line */
-    background-color: rgba(255, 255, 255, 0); /* Transparent background */
-    border: 1px solid var(--color-3); /* Border like input */
-    border-radius: 6px; /* Rounded corners */
-    padding: 5px;
-    box-shadow: 0 0 5px rgba(185, 150, 104, 0.5); /* Shadow like input focus */
-    z-index: 1000; /* Ensure it's above everything */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease-out, transform 0.2s ease-out, visibility 0.2s;
-    pointer-events: none; /* Don't block clicks when hidden */
-}
-
-.mood-bubble.active {
-    opacity: 1;
-    visibility: visible;
-    /* Position will be set by JS */
-    pointer-events: all; /* Enable clicks */
-}
-
-.mood-bubble .emoji-option {
-    font-size: 1.8em; /* Emojis inside the bubble are a bit larger */
-    cursor: pointer;
-    padding: 0 5px; /* Spacing between emojis */
-    transition: transform 0.1s ease-out;
-}
-
-.mood-bubble .emoji-option:hover {
-    transform: scale(1.2); /* Pop out on hover */
-}
-
-
-/* Animaciones para cada emoji */
-@keyframes angry-frown {
-    0%, 100% { transform: scale(1); }
-    25% { transform: scale(0.95); }
-    50% { transform: scale(1.05); }
-    75% { transform: scale(0.98); }
-}
-.mood-emoji.animate-angry { animation: angry-frown 0.4s ease-in-out; }
-
-@keyframes sad-cry {
-    0%, 100% { transform: translateY(0); }
-    25% { transform: translateY(2px) rotate(-1deg); }
-    50% { transform: translateY(0) rotate(0deg); }
-    75% { transform: translateY(2px) rotate(1deg); }
-}
-.mood-emoji.animate-sad { animation: sad-cry 0.6s ease-in-out; }
-
-@keyframes happy-bounce {
-    0%, 100% { transform: translateY(0) scaleX(1); }
-    25% { transform: translateY(-5px) scaleX(1.05); }
-    50% { transform: translateY(0) scaleX(1); }
-    75% { transform: translateY(-3px) scaleX(1.02); }
-}
-.mood-emoji.animate-happy { animation: happy-bounce 0.5s ease-out; }
-
-@keyframes love-heartbeat {
-    0%, 100% { transform: scale(1); }
-    15% { transform: scale(1.2); }
-    30% { transform: scale(1); }
-    45% { transform: scale(1.1); }
-    60% { transform: scale(1); }
-}
-.mood-emoji.animate-love { animation: love-heartbeat 0.8s ease-in-out; }
-
-@keyframes worried-tremble {
-    0%, 100% { transform: translateX(0) translateY(0); }
-    10% { transform: translateX(-1px) translateY(1px); }
-    20% { transform: translateX(1px) translateY(-1px); }
-    30% { transform: translateX(-1px) translateY(1px); }
-    40% { transform: translateX(1px) translateY(-1px); }
-    50% { transform: translateX(-1px) translateY(1px); }
-    60% { transform: translateX(1px) translateY(-1px); }
-    70% { transform: translateX(-1px) translateY(1px); }
-    80% { transform: translateX(1px) translateY(-1px); }
-    90% { transform: translateX(-1px) translateY(1px); }
-}
-.mood-emoji.animate-worried { animation: worried-tremble 0.5s linear; }
-
-
-/* Input de Notas Parciales */
 input[type='text'] {
   width: 80%;
   padding: 6px;
@@ -298,7 +157,7 @@ input[type='text']:focus {
   box-shadow: 0 0 5px rgba(185, 150, 104, 0.5);
 }
 
-.estado {
+.estado-materia {
   font-weight: bold;
   font-size: 0.8em;
   line-height: 1.2;
@@ -312,13 +171,11 @@ input[type='text']:focus {
   color: var(--color-2);
 }
 
-/* Resalte de la Materia Promocionada */
-.td-materia-promocionada {
+.celda-materia-aprobada {
   background-color: var(--color-aprobada-fondo);
   font-weight: bold;
 }
 
-/* Responsive */
 @media screen and (max-width: 600px) {
   body {
     padding: 0 5px;
@@ -330,12 +187,11 @@ input[type='text']:focus {
     max-width: 100%;
   }
 
-  /* Barra de progreso en móvil */
-  .progress-container {
+  .contenedor-progreso {
     height: 20px;
     margin: 0 auto 20px auto;
   }
-  .progress-text {
+  .texto-progreso {
     font-size: 0.9em;
   }
 
@@ -345,20 +201,20 @@ input[type='text']:focus {
     box-sizing: border-box;
   }
 
-  .anio {
+  .seccion-anio {
     padding: 0;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  .anio h2 {
+  .seccion-anio h2 {
     padding: 16px 16px 5px;
     margin-bottom: 10px;
     font-size: 1.9em;
   }
 
   table {
-    min-width: 680px; /* Asegura que la tabla no se rompa */
+    min-width: 680px;
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
@@ -377,7 +233,7 @@ input[type='text']:focus {
       font-size: 0.9em;
   }
   
-  .estado {
+  .estado-materia {
     font-size: 0.75em;
   }
 
