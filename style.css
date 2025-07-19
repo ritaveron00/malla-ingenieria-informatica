@@ -151,6 +151,7 @@ input[type='text'] {
   color: var(--color-1);
 }
 
+/* SOLO input[type='text']:focus ahora */
 input[type='text']:focus {
   outline: none;
   border-color: var(--color-borde-foco);
@@ -247,7 +248,6 @@ input[type='text']:focus {
       display: table-cell;
   }
 }
-
 
 
 
