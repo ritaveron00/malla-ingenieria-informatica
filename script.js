@@ -116,7 +116,7 @@ for (const anio in agrupadoPorAnio) {
       celdaFecha.textContent = datos.fechaCierre || "";
       if (datos.estado === "Promocionada") {
         celdaEstado.classList.add("promocionada");
-      } else if (datos.estado === "Obligatoria") { // Mantener esta clase para "Final" y "Libre/Recupera"
+      } else if (datos.estado === "Obligatoria" || datos.estado === "Recursar") { 
         celdaEstado.classList.add("obligatoria");
       }
       const promedioCargado = parseFloat(datos.notaFinal);
@@ -129,21 +129,21 @@ for (const anio in agrupadoPorAnio) {
       let promedioCalculadoSinRedondeo = NaN;
       let notaFinalRedondeadaParaMostrar = NaN;
       let esPromocionada = false;
-      let estadoFinal = "";
+      let estadoTexto = ""; 
 
       celdaNombre.classList.remove("celda-materia-aprobada");
-      celdaEstado.className = "estado-materia"; // Resetear clases
+      celdaEstado.className = "estado-materia"; 
 
       const partes = valor.split("-").map(n => parseFloat(n));
 
       if (valor === "") {
-        estadoFinal = "";
+        estadoTexto = "";
         notaFinalRedondeadaParaMostrar = "";
         celdaFecha.textContent = "";
       } else if (partes.length === 1 && !isNaN(partes[0])) {
         promedioCalculadoSinRedondeo = partes[0];
         notaFinalRedondeadaParaMostrar = aplicarRedondeoUBAXXI(promedioCalculadoSinRedondeo);
-        esPromocionada = (promedioCalculadoSinRedondeo >= 7); // Asumiendo que con 7 directo promociona
+        esPromocionada = (promedioCalculadoSinRedondeo >= 7);
       } else if (partes.length === 2 && partes.every(n => !isNaN(n))) {
         const nota1 = partes[0];
         const nota2 = partes[1];
@@ -151,67 +151,59 @@ for (const anio in agrupadoPorAnio) {
         promedioCalculadoSinRedondeo = (nota1 + nota2) / 2;
         notaFinalRedondeadaParaMostrar = aplicarRedondeoUBAXXI(promedioCalculadoSinRedondeo);
 
-        // Lógica de promoción UBA XXI: promedio 6.5+ Y ninguna nota < 6
         esPromocionada = (promedioCalculadoSinRedondeo >= 6.5 && nota1 >= 6 && nota2 >= 6);
 
-        // Prioridad: si alguna nota es menor a 4, va a recuperatorio/recursa
         if (nota1 < 4 || nota2 < 4) {
-            estadoFinal = "Libre/Recupera";
-            // Aunque sea "Libre/Recupera", si la nota final redondeada es < 4, se muestra "Recursar"
-            // en la columna final, según la petición del usuario.
-            if (notaFinalRedondeadaParaMostrar < 4) {
-                notaFinalRedondeadaParaMostrar = "Recursar"; // Se guarda como string
-            } else {
-                notaFinalRedondeadaParaMostrar = notaFinalRedondeadaParaMostrar.toFixed(0);
-            }
+            estadoTexto = "Recursar";
+            celdaEstado.classList.add("obligatoria");
+            notaFinalRedondeadaParaMostrar = "Recursar";
             celdaFecha.textContent = "";
-
             const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
             datosAGuardar.notas = valor;
-            datosAGuardar.estado = estadoFinal;
+            datosAGuardar.estado = estadoTexto;
             datosAGuardar.notaFinal = notaFinalRedondeadaParaMostrar;
             datosAGuardar.fechaCierre = celdaFecha.textContent;
             localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
             actualizarBarraProgreso();
-            return; // Termina la función aquí para este caso
+            return;
         }
 
       }
 
       if (!isNaN(promedioCalculadoSinRedondeo)) {
         if (esPromocionada) {
-            estadoFinal = "Promocionada";
+            estadoTexto = "Promocionada";
             celdaEstado.classList.add("promocionada");
             notaFinalRedondeadaParaMostrar = notaFinalRedondeadaParaMostrar.toFixed(0);
         } else if (notaFinalRedondeadaParaMostrar >= 4) {
-            estadoFinal = "Final";
+            estadoTexto = "Obligatoria";
             celdaEstado.classList.add("obligatoria");
             notaFinalRedondeadaParaMostrar = notaFinalRedondeadaParaMostrar.toFixed(0);
         } else {
-            estadoFinal = "Recursar";
-            celdaEstado.classList.add("obligatoria"); // Puedes usar la misma clase de estilo
-            notaFinalRedondeadaParaMostrar = "Recursar"; // Se guarda como string
+            estadoTexto = "Recursar";
+            celdaEstado.classList.add("obligatoria");
+            notaFinalRedondeadaParaMostrar = "Recursar";
         }
-        celdaFecha.textContent = (estadoFinal === "Promocionada" || estadoFinal === "Final") ? new Date().toLocaleDateString("es-AR") : "";
+        
+        celdaFecha.textContent = (estadoTexto === "Promocionada" || estadoTexto === "Obligatoria") ? new Date().toLocaleDateString("es-AR") : "";
 
-        // Resaltar materia si la nota final redondeada es 4 o más (o si es "Promocionada")
         if (parseFloat(notaFinalRedondeadaParaMostrar) >= 4 && parseFloat(notaFinalRedondeadaParaMostrar) <= 10) {
           celdaNombre.classList.add("celda-materia-aprobada");
         } else {
             celdaNombre.classList.remove("celda-materia-aprobada");
         }
       } else {
-        estadoFinal = "";
+        estadoTexto = "";
         notaFinalRedondeadaParaMostrar = "";
         celdaFecha.textContent = "";
       }
 
-      celdaEstado.textContent = estadoFinal;
+      celdaEstado.textContent = estadoTexto;
       celdaFinal.textContent = notaFinalRedondeadaParaMostrar;
 
       const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
       datosAGuardar.notas = valor;
-      datosAGuardar.estado = estadoFinal;
+      datosAGuardar.estado = estadoTexto;
       datosAGuardar.notaFinal = notaFinalRedondeadaParaMostrar;
       datosAGuardar.fechaCierre = celdaFecha.textContent;
       localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
@@ -230,7 +222,6 @@ for (const anio in agrupadoPorAnio) {
   contenedorPrincipal.appendChild(seccion);
 }
 actualizarBarraProgreso();
-
 
 
 
