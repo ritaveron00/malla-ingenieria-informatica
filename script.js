@@ -45,6 +45,12 @@ materias.forEach(m => {
 });
 
 function aplicarRedondeoUBAXXI(nota) {
+    // Asegura que la nota sea un número y no un valor vacío o inválido
+    if (isNaN(nota) || nota === null || nota === '') {
+        return NaN; // O manejarlo de otra forma, como devolver el mismo valor
+    }
+    nota = parseFloat(nota); // Asegura que sea un flotante
+
     if (nota === 3.5) {
         return 3;
     }
@@ -63,7 +69,7 @@ function actualizarBarraProgreso() {
         const datosGuardados = localStorage.getItem(materia.nombre);
         if (datosGuardados) {
             const datos = JSON.parse(datosGuardados);
-            const notaFinal = parseFloat(datos.notaFinal);
+            const notaFinal = parseFloat(datos.notaFinal); // Ya está redondeada al guardar
             if (!isNaN(notaFinal) && notaFinal >= 4) {
                 materiasAprobadas++;
             }
@@ -103,8 +109,8 @@ function inicializarTablas() {
 
             const inputNotasParciales = document.createElement("input");
             inputNotasParciales.type = "text";
-            inputNotasParciales.placeholder = ""; 
-            inputNotasParciales.classList.add("notas-parciales-input"); 
+            inputNotasParciales.placeholder = "";
+            inputNotasParciales.classList.add("notas-parciales-input");
             const celdaInputParciales = document.createElement("td");
             celdaInputParciales.appendChild(inputNotasParciales);
             
@@ -123,6 +129,7 @@ function inicializarTablas() {
             celdaNotaFinal.appendChild(inputNotaFinalManual);
             celdaNotaFinal.appendChild(spanNotaFinalEstatica);
             
+            // Cargar datos guardados al inicio
             const datosGuardados = localStorage.getItem(materia.nombre);
             if (datosGuardados) {
                 const datos = JSON.parse(datosGuardados);
@@ -139,10 +146,21 @@ function inicializarTablas() {
                     celdaEstado.classList.add("promocionada");
                 } else { 
                     inputNotaFinalManual.style.display = "block";
-                    inputNotaFinalManual.value = datos.notaFinal || ""; 
+                    // Al cargar, si la nota es "Recursar" por promedio de parciales, la cargamos con un decimal
+                    if (datos.estado === "Recursar" && datos.notaFinal) {
+                        inputNotaFinalManual.value = parseFloat(datos.notaFinal).toFixed(1);
+                    } else {
+                        inputNotaFinalManual.value = datos.notaFinal || ""; 
+                    }
                     spanNotaFinalEstatica.style.display = "none";
-                    if (datos.estado === "Obligatoria" || datos.estado === "Recursar") {
+                    if (datos.estado === "Obligatoria") {
                         celdaEstado.classList.add("obligatoria");
+                    } else if (datos.estado === "Recursar" || datos.estado === "Aprobada") { // Aprobada manual o Recursar
+                        celdaEstado.classList.add("obligatoria"); // Mismo estilo visual que "Obligatoria" para "Recursar"
+                        if (datos.estado === "Aprobada") {
+                             celdaEstado.classList.remove("obligatoria");
+                             celdaEstado.classList.add("promocionada");
+                        }
                     }
                 }
                 
@@ -151,6 +169,7 @@ function inicializarTablas() {
                 }
             }
 
+            // Event listener para las Notas Parciales
             inputNotasParciales.addEventListener("input", () => {
                 const valor = inputNotasParciales.value.trim();
                 let promedioCalculadoSinRedondeo = NaN;
@@ -158,8 +177,9 @@ function inicializarTablas() {
                 let textoEstadoColumna = "";
                 let fechaParaGuardar = "";
 
+                // Resetear estados visuales
                 celdaNombre.classList.remove("celda-materia-aprobada");
-                celdaEstado.className = "estado-materia";
+                celdaEstado.className = "estado-materia"; // Quitar clases de estado anteriores
                 inputNotaFinalManual.value = ""; 
                 spanNotaFinalEstatica.textContent = "";
                 celdaFecha.textContent = ""; 
@@ -205,7 +225,7 @@ function inicializarTablas() {
                         celdaNombre.classList.add("celda-materia-aprobada");
                     } else if (nota1 < 4 && nota2 < 4) { 
                         textoEstadoColumna = "Recursar";
-                        celdaEstado.classList.add("obligatoria");
+                        celdaEstado.classList.add("obligatoria"); // Mismo estilo visual
                         promedioCalculadoSinRedondeo = (nota1 + nota2) / 2;
                         inputNotaFinalManual.value = promedioCalculadoSinRedondeo.toFixed(1); 
                         inputNotaFinalManual.style.display = "block"; 
@@ -229,23 +249,53 @@ function inicializarTablas() {
                 actualizarBarraProgreso();
             });
 
+            // Event listener para el input de la nota final manual
             inputNotaFinalManual.addEventListener("input", () => {
-                const notaManual = inputNotaFinalManual.value.trim();
-                const notaNumericaManual = parseFloat(notaManual);
+                const notaManualStr = inputNotaFinalManual.value.trim();
+                let notaNumericaManual = parseFloat(notaManualStr);
                 let fechaParaGuardar = "";
-
-                celdaNombre.classList.remove("celda-materia-aprobada");
+                let estadoParaGuardar = "";
                 
-                if (!isNaN(notaNumericaManual) && notaNumericaManual >= 4 && notaNumericaManual <= 10) {
-                    fechaParaGuardar = new Date().toLocaleDateString("es-AR");
-                    celdaNombre.classList.add("celda-materia-aprobada");
+                // Limpiar resaltado y clases de estado
+                celdaNombre.classList.remove("celda-materia-aprobada");
+                celdaEstado.className = "estado-materia"; // Resetear clases de estado
+
+                if (!isNaN(notaNumericaManual) && notaManualStr !== '') {
+                    // Aplicar redondeo UBA XXI a la nota ingresada manualmente
+                    const notaRedondeada = aplicarRedondeoUBAXXI(notaNumericaManual);
+                    
+                    // Actualizar el valor en el input con la nota redondeada (sin decimales para enteros)
+                    if (Number.isInteger(notaRedondeada)) {
+                        inputNotaFinalManual.value = notaRedondeada.toFixed(0);
+                    } else {
+                        inputNotaFinalManual.value = notaRedondeada.toFixed(1); // Mantener un decimal si no es entero (ej. 3.0)
+                    }
+
+                    if (notaRedondeada >= 4 && notaRedondeada <= 10) {
+                        fechaParaGuardar = new Date().toLocaleDateString("es-AR");
+                        celdaNombre.classList.add("celda-materia-aprobada");
+                        estadoParaGuardar = "Aprobada"; 
+                        celdaEstado.classList.add("promocionada"); // Estilo visual de éxito
+                    } else if (notaRedondeada < 4 && notaRedondeada >= 0) {
+                        estadoParaGuardar = "Recursar";
+                        celdaEstado.classList.add("obligatoria"); // Estilo visual de no aprobado
+                        fechaParaGuardar = ""; // No hay fecha de cierre si recursa
+                    } else { // Valor fuera de rango 0-10 después de redondeo
+                        estadoParaGuardar = ""; // Limpiar estado si la nota es inválida
+                        fechaParaGuardar = "";
+                    }
+                } else { // Si el input está vacío o no es un número válido
+                    estadoParaGuardar = ""; // Limpiar estado
+                    fechaParaGuardar = "";
                 }
+                
+                celdaEstado.textContent = estadoParaGuardar;
                 celdaFecha.textContent = fechaParaGuardar;
 
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                 datosAGuardar.notas = inputNotasParciales.value;
-                datosAGuardar.estado = celdaEstado.textContent;
-                datosAGuardar.notaFinal = notaManual; 
+                datosAGuardar.estado = celdaEstado.textContent; 
+                datosAGuardar.notaFinal = inputNotaFinalManual.value; // Guarda el valor redondeado del input
                 datosAGuardar.fechaCierre = fechaParaGuardar;
                 
                 localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
