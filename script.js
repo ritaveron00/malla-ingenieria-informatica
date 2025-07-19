@@ -5,14 +5,12 @@ const materias = [
   { anio: "Primer Año", nombre: "Sociedad y Estado" },
   { anio: "Primer Año", nombre: "Física" },
   { anio: "Primer Año", nombre: "Álgebra" },
-  
   { anio: "Segundo Año", nombre: "Análisis Matemático II" },
   { anio: "Segundo Año", nombre: "Fundamentos de Programación" },
   { anio: "Segundo Año", nombre: "Introducción al Desarrollo de Software" },
   { anio: "Segundo Año", nombre: "Álgebra Lineal" },
   { anio: "Segundo Año", nombre: "Organización del Computador" },
   { anio: "Segundo Año", nombre: "Algoritmos y Estructuras de Datos" },
-  
   { anio: "Tercer Año", nombre: "Probabilidad y Estadística" },
   { anio: "Tercer Año", nombre: "Teoría de Algoritmos" },
   { anio: "Tercer Año", nombre: "Sistemas Operativos" },
@@ -21,7 +19,6 @@ const materias = [
   { anio: "Tercer Año", nombre: "Modelación Numérica" },
   { anio: "Tercer Año", nombre: "Taller de Programación" },
   { anio: "Tercer Año", nombre: "Ingeniería de Software I" },
-  
   { anio: "Cuarto Año", nombre: "Ciencia de Datos" },
   { anio: "Cuarto Año", nombre: "Gestión del Desarrollo de Sistemas Informáticos" },
   { anio: "Cuarto Año", nombre: "Programación Concurrente" },
@@ -30,10 +27,9 @@ const materias = [
   { anio: "Cuarto Año", nombre: "Empresas de Base Tecnológica I" },
   { anio: "Cuarto Año", nombre: "Ingeniería de Software II" },
   { anio: "Cuarto Año", nombre: "Sistemas Distribuidos I" },
-  
   { anio: "Quinto Año", nombre: "Taller de Seguridad Informática" },
-  { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
   { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
+  { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
 
@@ -47,6 +43,18 @@ materias.forEach(m => {
   if (!agrupadoPorAnio[m.anio]) agrupadoPorAnio[m.anio] = [];
   agrupadoPorAnio[m.anio].push(m);
 });
+
+function aplicarRedondeoUBAXXI(nota) {
+    if (nota === 3.5) {
+        return 3;
+    }
+    const parteDecimal = nota - Math.floor(nota);
+    if (parteDecimal >= 0.5) {
+        return Math.ceil(nota);
+    } else {
+        return Math.floor(nota);
+    }
+}
 
 function actualizarBarraProgreso() {
     let materiasAprobadas = 0;
@@ -118,30 +126,65 @@ for (const anio in agrupadoPorAnio) {
     }
     inputNotas.addEventListener("input", () => {
       const valor = inputNotas.value.trim();
-      let promedio = NaN;
-      let suma = NaN;
+      let promedioCalculado = NaN;
+      let notaFinalRedondeada = NaN;
       let esPromocionada = false;
+
       celdaNombre.classList.remove("celda-materia-aprobada");
       celdaEstado.className = "estado-materia";
       const partes = valor.split("-").map(n => parseFloat(n));
+
       if (valor === "") {
         celdaEstado.textContent = "";
         celdaFinal.textContent = "";
         celdaFecha.textContent = "";
       } else if (partes.length === 1 && !isNaN(partes[0])) {
-        promedio = partes[0];
-        esPromocionada = (promedio >= 7);
+        promedioCalculado = partes[0];
+        notaFinalRedondeada = aplicarRedondeoUBAXXI(promedioCalculado);
+        esPromocionada = (notaFinalRedondeada >= 7 && promedioCalculado >= 6.5);
       } else if (partes.length === 2 && partes.every(n => !isNaN(n))) {
-        suma = partes[0] + partes[1];
-        promedio = (partes[0] + partes[1]) / 2;
-        esPromocionada = (suma >= 14);
+        const nota1 = partes[0];
+        const nota2 = partes[1];
+
+        if (nota1 < 4 || nota2 < 4) {
+            notaFinalRedondeada = Math.min(nota1, nota2);
+            celdaEstado.textContent = "Libre/Recupera";
+            celdaEstado.classList.add("obligatoria");
+            celdaFinal.textContent = notaFinalRedondeada.toFixed(1);
+            celdaFecha.textContent = "";
+            const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
+            datosAGuardar.notas = valor;
+            datosAGuardar.estado = celdaEstado.textContent;
+            datosAGuardar.notaFinal = celdaFinal.textContent;
+            datosAGuardar.fechaCierre = celdaFecha.textContent;
+            localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
+            actualizarBarraProgreso();
+            return;
+        }
+        
+        promedioCalculado = (nota1 + nota2) / 2;
+        notaFinalRedondeada = aplicarRedondeoUBAXXI(promedioCalculado);
+
+        esPromocionada = (notaFinalRedondeada >= 7 && nota1 >= 6 && nota2 >= 6);
+
       }
-      if (!isNaN(promedio)) {
-        celdaFinal.textContent = promedio.toFixed(1);
-        celdaFecha.textContent = promedio >= 4 ? new Date().toLocaleDateString("es-AR") : "";
-        celdaEstado.textContent = esPromocionada ? "Promocionada" : "Obligatoria";
-        celdaEstado.classList.add(esPromocionada ? "promocionada" : "obligatoria");
-        if (promedio >= 4 && promedio <= 10) {
+
+      if (!isNaN(promedioCalculado)) {
+        celdaFinal.textContent = notaFinalRedondeada.toFixed(0);
+        celdaFecha.textContent = notaFinalRedondeada >= 4 ? new Date().toLocaleDateString("es-AR") : "";
+
+        if (esPromocionada) {
+            celdaEstado.textContent = "Promocionada";
+            celdaEstado.classList.add("promocionada");
+        } else if (notaFinalRedondeada >= 4) {
+            celdaEstado.textContent = "Final";
+            celdaEstado.classList.add("obligatoria");
+        } else {
+            celdaEstado.textContent = "Libre/Recupera";
+            celdaEstado.classList.add("obligatoria");
+        }
+        
+        if (notaFinalRedondeada >= 4 && notaFinalRedondeada <= 10) {
           celdaNombre.classList.add("celda-materia-aprobada");
         }
       } else {
@@ -149,6 +192,7 @@ for (const anio in agrupadoPorAnio) {
         celdaFinal.textContent = "";
         celdaFecha.textContent = "";
       }
+
       const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
       datosAGuardar.notas = valor;
       datosAGuardar.estado = celdaEstado.textContent;
@@ -157,6 +201,7 @@ for (const anio in agrupadoPorAnio) {
       localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
       actualizarBarraProgreso();
     });
+
     fila.appendChild(celdaNombre);
     fila.appendChild(celdaInput);
     fila.appendChild(celdaEstado);
