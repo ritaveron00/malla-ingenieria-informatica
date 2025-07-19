@@ -104,14 +104,14 @@ function inicializarTablas() {
             const inputNotasParciales = document.createElement("input");
             inputNotasParciales.type = "text";
             inputNotasParciales.placeholder = "";
-            inputNotasParciales.classList.add("notas-parciales-input"); 
+            inputNotasParciales.classList.add("notas-parciales-input");
             const celdaInputParciales = document.createElement("td");
             celdaInputParciales.appendChild(inputNotasParciales);
             
-            const celdaEstado = document.createElement("td"); 
+            const celdaEstado = document.createElement("td");
             celdaEstado.classList.add("estado-materia");
             const celdaFecha = document.createElement("td");
-            const celdaNotaFinal = document.createElement("td"); 
+            const celdaNotaFinal = document.createElement("td");
             
             const inputNotaFinalManual = document.createElement("input");
             inputNotaFinalManual.type = "number";
@@ -119,7 +119,7 @@ function inicializarTablas() {
             inputNotaFinalManual.max = "10";
             inputNotaFinalManual.placeholder = "Nota final";
             inputNotaFinalManual.style.display = "none";
-            inputNotaFinalManual.classList.add("notas-parciales-input"); 
+            inputNotaFinalManual.classList.add("notas-parciales-input");
 
             celdaNotaFinal.appendChild(inputNotaFinalManual);
             
@@ -130,12 +130,14 @@ function inicializarTablas() {
                 celdaEstado.textContent = datos.estado || "";
                 celdaFecha.textContent = datos.fechaCierre || "";
 
-                if (datos.estado === "Obligatoria" && datos.notaFinal && !isNaN(parseFloat(datos.notaFinal))) {
-                    inputNotaFinalManual.value = parseFloat(datos.notaFinal);
+                if (datos.estado === "Obligatoria") {
                     inputNotaFinalManual.style.display = "block";
+                    inputNotaFinalManual.value = datos.notaFinal || "";
+                    celdaNotaFinal.textContent = "";
                 } else {
                     celdaNotaFinal.textContent = datos.notaFinal || "";
                     inputNotaFinalManual.style.display = "none";
+                    inputNotaFinalManual.value = "";
                 }
 
                 if (datos.estado === "Promocionada") {
@@ -158,15 +160,15 @@ function inicializarTablas() {
 
                 celdaNombre.classList.remove("celda-materia-aprobada");
                 celdaEstado.className = "estado-materia";
+                
                 inputNotaFinalManual.style.display = "none";
-                celdaNotaFinal.textContent = "";
                 inputNotaFinalManual.value = ""; 
+                celdaNotaFinal.textContent = "";
 
                 const partes = valor.split("-").map(n => parseFloat(n));
 
                 if (valor === "") {
                     textoEstadoColumna = "";
-                    textoNotaFinalColumna = "";
                     celdaFecha.textContent = "";
                 } else if (partes.length === 1 && !isNaN(partes[0])) {
                     promedioCalculadoSinRedondeo = partes[0];
@@ -176,6 +178,7 @@ function inicializarTablas() {
                     if (promedioCalculadoSinRedondeo >= 7) {
                         textoEstadoColumna = "Promocionada";
                         celdaEstado.classList.add("promocionada");
+                        celdaNotaFinal.textContent = textoNotaFinalColumna;
                     } else {
                         textoEstadoColumna = "Obligatoria";
                         celdaEstado.classList.add("obligatoria");
@@ -213,6 +216,7 @@ function inicializarTablas() {
                     if ((nota1 + nota2) >= 14) {
                         textoEstadoColumna = "Promocionada";
                         celdaEstado.classList.add("promocionada");
+                        celdaNotaFinal.textContent = textoNotaFinalColumna;
                     } else {
                         textoEstadoColumna = "Obligatoria";
                         celdaEstado.classList.add("obligatoria");
@@ -220,49 +224,37 @@ function inicializarTablas() {
                     }
 
                 }
+                
+                celdaEstado.textContent = textoEstadoColumna;
+                celdaFecha.textContent = (parseFloat(textoNotaFinalColumna) >= 4 || (inputNotaFinalManual.style.display === "block" && parseFloat(inputNotaFinalManual.value) >=4) ) ? new Date().toLocaleDateString("es-AR") : "";
 
-                if (!isNaN(promedioCalculadoSinRedondeo)) {
-                    celdaEstado.textContent = textoEstadoColumna;
-                    if (inputNotaFinalManual.style.display === "none") {
-                        celdaNotaFinal.textContent = textoNotaFinalColumna;
-                    }
-                    
-                    celdaFecha.textContent = (parseFloat(textoNotaFinalColumna) >= 4) ? new Date().toLocaleDateString("es-AR") : "";
+                const finalParaAprobado = (inputNotaFinalManual.style.display === "block" && inputNotaFinalManual.value !== "") ? parseFloat(inputNotaFinalManual.value) : parseFloat(textoNotaFinalColumna);
 
-                    const finalParaAprobado = (inputNotaFinalManual.style.display === "block" && inputNotaFinalManual.value !== "") ? parseFloat(inputNotaFinalManual.value) : parseFloat(textoNotaFinalColumna);
-
-                    if (!isNaN(finalParaAprobado) && finalParaAprobado >= 4 && finalParaAprobado <= 10) {
-                        celdaNombre.classList.add("celda-materia-aprobada");
-                    } else {
-                        celdaNombre.classList.remove("celda-materia-aprobada");
-                    }
-
-                    const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
-                    datosAGuardar.notas = valor;
-                    datosAGuardar.estado = celdaEstado.textContent;
-                    datosAGuardar.notaFinal = (inputNotaFinalManual.style.display === "block") ? inputNotaFinalManual.value : celdaNotaFinal.textContent;
-                    datosAGuardar.fechaCierre = celdaFecha.textContent;
-                    localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
-                    actualizarBarraProgreso();
+                if (!isNaN(finalParaAprobado) && finalParaAprobado >= 4 && finalParaAprobado <= 10) {
+                    celdaNombre.classList.add("celda-materia-aprobada");
                 } else {
-                    celdaEstado.textContent = "";
-                    celdaNotaFinal.textContent = "";
-                    celdaFecha.textContent = "";
-                    inputNotaFinalManual.value = "";
+                    celdaNombre.classList.remove("celda-materia-aprobada");
                 }
+
+                const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
+                datosAGuardar.notas = valor;
+                datosAGuardar.estado = celdaEstado.textContent;
+                datosAGuardar.notaFinal = (inputNotaFinalManual.style.display === "block") ? inputNotaFinalManual.value : celdaNotaFinal.textContent;
+                datosAGuardar.fechaCierre = celdaFecha.textContent;
+                localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
+                actualizarBarraProgreso();
             });
 
             inputNotaFinalManual.addEventListener("input", () => {
-                const valor = inputNotasParciales.value.trim();
+                const valorNotasParciales = inputNotasParciales.value.trim();
                 const notaManual = inputNotaFinalManual.value.trim();
                 let notaNumericaManual = parseFloat(notaManual);
 
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
-                datosAGuardar.notas = valor;
+                datosAGuardar.notas = valorNotasParciales;
                 datosAGuardar.estado = celdaEstado.textContent; 
                 datosAGuardar.notaFinal = notaManual;
-                datosAGuardar.fechaCierre = "";
-
+                
                 if (!isNaN(notaNumericaManual) && notaNumericaManual >= 4) {
                     datosAGuardar.fechaCierre = new Date().toLocaleDateString("es-AR");
                     celdaFecha.textContent = datosAGuardar.fechaCierre;
@@ -296,5 +288,4 @@ function inicializarTablas() {
 }
 
 document.addEventListener("DOMContentLoaded", inicializarTablas);
-
 
