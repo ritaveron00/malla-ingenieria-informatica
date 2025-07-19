@@ -4,7 +4,7 @@
   --color-3: #DCC9A7;
   --color-4: #EDE2CC;
   --color-5: #F7F3E8;
-  --color-aprobada-fondo: var(--color-4);
+  --color-aprobada-fondo: var(--color-3); 
   --color-borde-foco: var(--color-2);
 }
 
@@ -136,7 +136,7 @@ td:first-child {
   width: 25%;
 }
 
-input[type='text'] {
+input {
   width: 80%;
   padding: 6px;
   border: 1px solid var(--color-3);
@@ -151,8 +151,7 @@ input[type='text'] {
   color: var(--color-1);
 }
 
-/* SOLO input[type='text']:focus ahora */
-input[type='text']:focus {
+input:focus {
   outline: none;
   border-color: var(--color-borde-foco);
   box-shadow: 0 0 5px rgba(185, 150, 104, 0.5);
@@ -233,12 +232,12 @@ input[type='text']:focus {
   td:first-child {
       font-size: 0.9em;
   }
-  
+
   .estado-materia {
     font-size: 0.75em;
   }
 
-  input[type='text'] {
+  input {
     width: 95%;
     padding: 5px;
     font-size: 0.85em;
