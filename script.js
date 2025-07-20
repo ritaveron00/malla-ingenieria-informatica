@@ -149,14 +149,28 @@ function inicializarTablas() {
                     celdaEstado.textContent = "";
                     celdaEstado.classList.add("obligatoria");
                 }
-                else if (datos.estado === "Aprobada") {
+                else if (datos.estado === "Aprobada") { // Esta es la "Aprobada" por Final, que ahora se llama "Aprobada"
                     inputNotaFinalManual.style.display = "block";
                     inputNotaFinalManual.value = datos.notaFinal || ""; 
                     spanNotaFinalEstatica.style.display = "none";
                     celdaEstado.textContent = "Aprobada";
-                    celdaEstado.classList.add("promocionada");
+                    celdaEstado.classList.add("promocionada"); // Sigue usando la clase de promocionada para el color verde
                 }
-                else {
+                else if (datos.estado === "Obligatoria") { // Agregamos este estado
+                    inputNotaFinalManual.style.display = "block";
+                    inputNotaFinalManual.value = datos.notaFinal || "";
+                    spanNotaFinalEstatica.style.display = "none";
+                    celdaEstado.textContent = "Obligatoria";
+                    celdaEstado.classList.add("obligatoria");
+                }
+                else if (datos.estado === "Recupera") { // Agregamos este estado
+                    inputNotaFinalManual.style.display = "block"; // Se debe poder ingresar nota de final
+                    inputNotaFinalManual.value = datos.notaFinal || ""; 
+                    spanNotaFinalEstatica.style.display = "none";
+                    celdaEstado.textContent = "Recupera";
+                    celdaEstado.classList.add("obligatoria"); // Usa el color rojo
+                }
+                else { // Para estados vacíos o no reconocidos, mostrar input manual
                     inputNotaFinalManual.style.display = "block";
                     inputNotaFinalManual.value = datos.notaFinal || ""; 
                     spanNotaFinalEstatica.style.display = "none";
@@ -171,10 +185,11 @@ function inicializarTablas() {
 
             inputNotasParciales.addEventListener("input", () => {
                 const valor = inputNotasParciales.value.trim();
-                let promedioCalculadoSinRedondeo = NaN;
+                let promedioCalculado = NaN; // Usaremos el promedio redondeado para el estado
                 let notaNumericaRedondeada = NaN;
                 let textoEstadoColumna = "";
                 let fechaParaGuardar = "";
+                let notasNumericas = [];
 
                 celdaNombre.classList.remove("celda-materia-aprobada");
                 celdaEstado.className = "estado-materia";
@@ -184,48 +199,130 @@ function inicializarTablas() {
                 inputNotaFinalManual.style.display = "none"; 
                 spanNotaFinalEstatica.style.display = "none"; 
 
-                const partes = valor.split("-").map(n => parseFloat(n)).filter(n => !isNaN(n));
-
+                // Limpiar valores previos si el input está vacío
                 if (valor === "") {
                     textoEstadoColumna = "";
                     fechaParaGuardar = "";
-                    inputNotaFinalManual.style.display = "block"; 
-                } else if (partes.length >= 1 && partes.length <= 3) { // Acepta de 1 a 3 notas
-                    const sumaNotas = partes.reduce((sum, current) => sum + current, 0);
-                    promedioCalculadoSinRedondeo = sumaNotas / partes.length;
-                    notaNumericaRedondeada = aplicarRedondeoUBAXXI(promedioCalculadoSinRedondeo);
-                    
-                    // Lógica para Promocionada / Recursar / Obligatoria con el promedio
-                    if (promedioCalculadoSinRedondeo >= 7 && partes.every(n => n >= 4)) { // Promociona con promedio >= 7 y todas las notas >= 4
+                    inputNotaFinalManual.style.display = "block"; // Siempre mostrar input final si no hay notas parciales
+                    const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
+                    datosAGuardar.notas = valor;
+                    datosAGuardar.estado = textoEstadoColumna;
+                    datosAGuardar.notaFinal = ""; // Limpiar nota final si se borran parciales
+                    datosAGuardar.fechaCierre = fechaParaGuardar;
+                    localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
+                    actualizarBarraProgreso();
+                    return; // Salir de la función para evitar procesar un valor vacío
+                }
+
+                const partesStr = valor.split("-").filter(p => p !== ''); // Dividir y quitar vacíos
+                notasNumericas = partesStr.map(n => parseFloat(n));
+
+                // Validar que todas las partes sean números y entre 1 y 3 notas
+                if (notasNumericas.some(isNaN) || notasNumericas.length === 0 || notasNumericas.length > 3) {
+                    textoEstadoColumna = ""; // Formato inválido o más de 3 notas
+                    inputNotaFinalManual.style.display = "block";
+                    // Guardar estado con posible error de formato si es necesario, o limpiar
+                    const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
+                    datosAGuardar.notas = valor;
+                    datosAGuardar.estado = textoEstadoColumna;
+                    datosAGuardar.notaFinal = ""; // Limpiar nota final si formato inválido
+                    datosAGuardar.fechaCierre = "";
+                    localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
+                    actualizarBarraProgreso();
+                    return;
+                }
+
+                const sumaNotas = notasNumericas.reduce((sum, current) => sum + current, 0);
+                
+                // Lógica de cálculo de promedio y estados
+                if (notasNumericas.length === 1) {
+                    const nota = notasNumericas[0];
+                    if (nota >= 7) {
                         textoEstadoColumna = "Promocionada";
                         celdaEstado.classList.add("promocionada");
+                        notaNumericaRedondeada = aplicarRedondeoUBAXXI(nota);
                         spanNotaFinalEstatica.textContent = notaNumericaRedondeada.toFixed(0);
                         spanNotaFinalEstatica.style.display = "block"; 
                         fechaParaGuardar = new Date().toLocaleDateString("es-AR");
                         celdaNombre.classList.add("celda-materia-aprobada");
-                    } else if (promedioCalculadoSinRedondeo < 4 || partes.some(n => n < 4)) { // Recursar si promedio < 4 o alguna nota < 4
-                        textoEstadoColumna = "Recursar";
-                        celdaEstado.classList.add("obligatoria");
-                        inputNotaFinalManual.value = promedioCalculadoSinRedondeo.toFixed(1); 
-                        inputNotaFinalManual.style.display = "block"; 
-                        fechaParaGuardar = "";
-                    } else { // Obligatoria en cualquier otro caso
+                    } else if (nota >= 4 && nota < 7) {
                         textoEstadoColumna = "Obligatoria";
                         celdaEstado.classList.add("obligatoria");
-                        inputNotaFinalManual.style.display = "block"; 
+                        inputNotaFinalManual.style.display = "block";
+                    } else if (nota < 4 && nota >= 0) {
+                        textoEstadoColumna = "Recursar"; // Si solo hay una nota y es menor a 4, directamente recursa
+                        celdaEstado.classList.add("obligatoria");
+                        inputNotaFinalManual.style.display = "block";
                     }
-                } else { // Más de 3 notas o formato incorrecto (se asume Obligatoria o se limpia)
-                    textoEstadoColumna = ""; // O podrías poner "Formato Inválido"
-                    inputNotaFinalManual.style.display = "block";
+                } else if (notasNumericas.length === 2) {
+                    const nota1 = notasNumericas[0];
+                    const nota2 = notasNumericas[1];
+                    const suma = nota1 + nota2;
+                    
+                    if (suma >= 14 && nota1 >= 4 && nota2 >= 4) { // Promociona si la suma es 14 o más Y ambas >= 4
+                        textoEstadoColumna = "Promocionada";
+                        celdaEstado.classList.add("promocionada");
+                        promedioCalculado = suma / 2;
+                        notaNumericaRedondeada = aplicarRedondeoUBAXXI(promedioCalculado);
+                        spanNotaFinalEstatica.textContent = notaNumericaRedondeada.toFixed(0);
+                        spanNotaFinalEstatica.style.display = "block";
+                        fechaParaGuardar = new Date().toLocaleDateString("es-AR");
+                        celdaNombre.classList.add("celda-materia-aprobada");
+                    } else if ((nota1 >= 4 && nota2 < 4) || (nota2 >= 4 && nota1 < 4)) { // Una aprobada, una desaprobada
+                        textoEstadoColumna = "Recupera";
+                        celdaEstado.classList.add("obligatoria");
+                        inputNotaFinalManual.style.display = "block";
+                    } else if (nota1 < 4 && nota2 < 4) { // Ambas desaprobadas
+                        textoEstadoColumna = "Recursar";
+                        celdaEstado.classList.add("obligatoria");
+                        inputNotaFinalManual.style.display = "block";
+                    } else { // Suma < 14 pero ambas >= 4
+                         textoEstadoColumna = "Obligatoria";
+                         celdaEstado.classList.add("obligatoria");
+                         inputNotaFinalManual.style.display = "block";
+                    }
+                } else if (notasNumericas.length === 3) {
+                    const nota1 = notasNumericas[0];
+                    const nota2 = notasNumericas[1];
+                    const nota3 = notasNumericas[2];
+                    const suma = nota1 + nota2 + nota3;
+
+                    // Contar cuántas notas son menores a 4
+                    const desaprobadas = notasNumericas.filter(n => n < 4).length;
+
+                    if (suma >= 20 && notasNumericas.every(n => n >= 4)) { // Promociona si la suma es 20 o más Y todas >= 4
+                        textoEstadoColumna = "Promocionada";
+                        celdaEstado.classList.add("promocionada");
+                        promedioCalculado = suma / 3;
+                        notaNumericaRedondeada = aplicarRedondeoUBAXXI(promedioCalculado);
+                        spanNotaFinalEstatica.textContent = notaNumericaRedondeada.toFixed(0);
+                        spanNotaFinalEstatica.style.display = "block";
+                        fechaParaGuardar = new Date().toLocaleDateString("es-AR");
+                        celdaNombre.classList.add("celda-materia-aprobada");
+                    } else if (desaprobadas === 1) { // Una desaprobada
+                        textoEstadoColumna = "Recupera";
+                        celdaEstado.classList.add("obligatoria");
+                        inputNotaFinalManual.style.display = "block";
+                    } else if (desaprobadas >= 2) { // Dos o más desaprobadas
+                        textoEstadoColumna = "Recursar";
+                        celdaEstado.classList.add("obligatoria");
+                        inputNotaFinalManual.style.display = "block";
+                    } else { // Suma < 20 pero todas >= 4
+                        textoEstadoColumna = "Obligatoria";
+                        celdaEstado.classList.add("obligatoria");
+                        inputNotaFinalManual.style.display = "block";
+                    }
                 }
                 
+                // Si el estado es "Recursar", el texto de la celda de estado es vacío.
                 celdaEstado.textContent = (textoEstadoColumna === "Recursar") ? "" : textoEstadoColumna; 
                 celdaFecha.textContent = fechaParaGuardar; 
 
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                 datosAGuardar.notas = valor;
                 datosAGuardar.estado = textoEstadoColumna;
-                datosAGuardar.notaFinal = (inputNotaFinalManual.style.display === "block") ? inputNotaFinalManual.value : spanNotaFinalEstatica.textContent;
+                // La nota final se guarda del input manual o del span estático
+                datosAGuardar.notaFinal = (spanNotaFinalEstatica.style.display === "block") ? spanNotaFinalEstatica.textContent : inputNotaFinalManual.value;
                 datosAGuardar.fechaCierre = fechaParaGuardar;
                 localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
                 actualizarBarraProgreso();
@@ -253,10 +350,10 @@ function inicializarTablas() {
                         fechaParaGuardar = new Date().toLocaleDateString("es-AR");
                         celdaNombre.classList.add("celda-materia-aprobada");
                         estadoParaGuardar = "Aprobada"; 
-                        celdaEstado.classList.add("promocionada"); 
+                        celdaEstado.classList.add("promocionada"); // Usa la clase de color verde
                     } else if (notaRedondeada < 4 && notaRedondeada >= 0) {
-                        estadoParaGuardar = "Recursar";
-                        celdaEstado.classList.add("obligatoria"); 
+                        estadoParaGuardar = "Recursar"; // Vuelve a ser recursar si el final es < 4
+                        celdaEstado.classList.add("obligatoria"); // Usa la clase de color rojo
                         fechaParaGuardar = ""; 
                     } else { 
                         estadoParaGuardar = ""; 
@@ -267,7 +364,7 @@ function inicializarTablas() {
                     fechaParaGuardar = "";
                 }
                 
-                celdaEstado.textContent = (estadoParaGuardar === "Recursar") ? "" : estadoParaGuardar;
+                celdaEstado.textContent = (estadoParaGuardar === "Recursar") ? "" : estadoParaGuardar; // Si es Recursar, el texto es vacío
                 celdaFecha.textContent = fechaParaGuardar;
 
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
