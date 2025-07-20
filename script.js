@@ -1,10 +1,10 @@
 const materias = [
   { anio: "Primer Año", nombre: "Pensamiento Científico" },
   { anio: "Primer Año", nombre: "Pensamiento Computacional" },
-  { anio: "Primer Año", nombre: "Análisis Matemático" },
+  { anio: "Primer Año", nombre: "Análisis Matemático A" },
   { anio: "Primer Año", nombre: "Sociedad y Estado" },
   { anio: "Primer Año", nombre: "Física" },
-  { anio: "Primer Año", nombre: "Álgebra" },
+  { anio: "Primer Año", nombre: "Álgebra A" },
   { anio: "Segundo Año", nombre: "Análisis Matemático II" },
   { anio: "Segundo Año", nombre: "Fundamentos de Programación" },
   { anio: "Segundo Año", nombre: "Introducción al Desarrollo de Software" },
@@ -28,8 +28,8 @@ const materias = [
   { anio: "Cuarto Año", nombre: "Ingeniería de Software II" },
   { anio: "Cuarto Año", nombre: "Sistemas Distribuidos I" },
   { anio: "Quinto Año", nombre: "Taller de Seguridad Informática" },
-  { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
+  { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
 
@@ -146,31 +146,31 @@ function inicializarTablas() {
                     inputNotaFinalManual.style.display = "block";
                     inputNotaFinalManual.value = datos.notaFinal || ""; 
                     spanNotaFinalEstatica.style.display = "none";
-                    celdaEstado.textContent = "";
+                    celdaEstado.textContent = ""; // "Recursar" muestra celda vacía
                     celdaEstado.classList.add("obligatoria");
                 }
-                else if (datos.estado === "Aprobada") { // Esta es la "Aprobada" por Final, que ahora se llama "Aprobada"
+                else if (datos.estado === "Aprobada") { 
                     inputNotaFinalManual.style.display = "block";
                     inputNotaFinalManual.value = datos.notaFinal || ""; 
                     spanNotaFinalEstatica.style.display = "none";
                     celdaEstado.textContent = "Aprobada";
-                    celdaEstado.classList.add("promocionada"); // Sigue usando la clase de promocionada para el color verde
+                    celdaEstado.classList.add("promocionada"); 
                 }
-                else if (datos.estado === "Obligatoria") { // Agregamos este estado
+                else if (datos.estado === "Obligatoria") { 
                     inputNotaFinalManual.style.display = "block";
                     inputNotaFinalManual.value = datos.notaFinal || "";
                     spanNotaFinalEstatica.style.display = "none";
                     celdaEstado.textContent = "Obligatoria";
                     celdaEstado.classList.add("obligatoria");
                 }
-                else if (datos.estado === "Recupera") { // Agregamos este estado
-                    inputNotaFinalManual.style.display = "block"; // Se debe poder ingresar nota de final
+                else if (datos.estado === "Recupera") { 
+                    inputNotaFinalManual.style.display = "block"; 
                     inputNotaFinalManual.value = datos.notaFinal || ""; 
                     spanNotaFinalEstatica.style.display = "none";
                     celdaEstado.textContent = "Recupera";
-                    celdaEstado.classList.add("obligatoria"); // Usa el color rojo
+                    celdaEstado.classList.add("obligatoria"); 
                 }
-                else { // Para estados vacíos o no reconocidos, mostrar input manual
+                else { 
                     inputNotaFinalManual.style.display = "block";
                     inputNotaFinalManual.value = datos.notaFinal || ""; 
                     spanNotaFinalEstatica.style.display = "none";
@@ -185,7 +185,7 @@ function inicializarTablas() {
 
             inputNotasParciales.addEventListener("input", () => {
                 const valor = inputNotasParciales.value.trim();
-                let promedioCalculado = NaN; // Usaremos el promedio redondeado para el estado
+                let promedioCalculado = NaN; 
                 let notaNumericaRedondeada = NaN;
                 let textoEstadoColumna = "";
                 let fechaParaGuardar = "";
@@ -199,33 +199,30 @@ function inicializarTablas() {
                 inputNotaFinalManual.style.display = "none"; 
                 spanNotaFinalEstatica.style.display = "none"; 
 
-                // Limpiar valores previos si el input está vacío
                 if (valor === "") {
                     textoEstadoColumna = "";
                     fechaParaGuardar = "";
-                    inputNotaFinalManual.style.display = "block"; // Siempre mostrar input final si no hay notas parciales
+                    inputNotaFinalManual.style.display = "block"; 
                     const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                     datosAGuardar.notas = valor;
                     datosAGuardar.estado = textoEstadoColumna;
-                    datosAGuardar.notaFinal = ""; // Limpiar nota final si se borran parciales
+                    datosAGuardar.notaFinal = ""; 
                     datosAGuardar.fechaCierre = fechaParaGuardar;
                     localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
                     actualizarBarraProgreso();
-                    return; // Salir de la función para evitar procesar un valor vacío
+                    return;
                 }
 
-                const partesStr = valor.split("-").filter(p => p !== ''); // Dividir y quitar vacíos
+                const partesStr = valor.split("-").filter(p => p !== ''); 
                 notasNumericas = partesStr.map(n => parseFloat(n));
 
-                // Validar que todas las partes sean números y entre 1 y 3 notas
                 if (notasNumericas.some(isNaN) || notasNumericas.length === 0 || notasNumericas.length > 3) {
-                    textoEstadoColumna = ""; // Formato inválido o más de 3 notas
+                    textoEstadoColumna = ""; 
                     inputNotaFinalManual.style.display = "block";
-                    // Guardar estado con posible error de formato si es necesario, o limpiar
                     const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                     datosAGuardar.notas = valor;
                     datosAGuardar.estado = textoEstadoColumna;
-                    datosAGuardar.notaFinal = ""; // Limpiar nota final si formato inválido
+                    datosAGuardar.notaFinal = ""; 
                     datosAGuardar.fechaCierre = "";
                     localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
                     actualizarBarraProgreso();
@@ -233,11 +230,17 @@ function inicializarTablas() {
                 }
 
                 const sumaNotas = notasNumericas.reduce((sum, current) => sum + current, 0);
+                const notasAprobadas = notasNumericas.filter(n => n >= 4 && n <= 10).length;
+                const notasDesaprobadas = notasNumericas.filter(n => n < 4).length;
                 
                 // Lógica de cálculo de promedio y estados
                 if (notasNumericas.length === 1) {
                     const nota = notasNumericas[0];
-                    if (nota >= 7) {
+                    if (nota < 4) { // Si la primera nota es menor a 4, marca "Recupera"
+                        textoEstadoColumna = "Recupera";
+                        celdaEstado.classList.add("obligatoria");
+                        inputNotaFinalManual.style.display = "block";
+                    } else if (nota >= 7) {
                         textoEstadoColumna = "Promocionada";
                         celdaEstado.classList.add("promocionada");
                         notaNumericaRedondeada = aplicarRedondeoUBAXXI(nota);
@@ -249,17 +252,14 @@ function inicializarTablas() {
                         textoEstadoColumna = "Obligatoria";
                         celdaEstado.classList.add("obligatoria");
                         inputNotaFinalManual.style.display = "block";
-                    } else if (nota < 4 && nota >= 0) {
-                        textoEstadoColumna = "Recursar"; // Si solo hay una nota y es menor a 4, directamente recursa
-                        celdaEstado.classList.add("obligatoria");
-                        inputNotaFinalManual.style.display = "block";
-                    }
+                    } 
                 } else if (notasNumericas.length === 2) {
+                    // Si ya hay 2 notas, se evalúa la condición de "Recupera" o "Recursar" o "Promociona" o "Obligatoria"
                     const nota1 = notasNumericas[0];
                     const nota2 = notasNumericas[1];
                     const suma = nota1 + nota2;
                     
-                    if (suma >= 14 && nota1 >= 4 && nota2 >= 4) { // Promociona si la suma es 14 o más Y ambas >= 4
+                    if (suma >= 14 && notasAprobadas === 2) { 
                         textoEstadoColumna = "Promocionada";
                         celdaEstado.classList.add("promocionada");
                         promedioCalculado = suma / 2;
@@ -268,29 +268,23 @@ function inicializarTablas() {
                         spanNotaFinalEstatica.style.display = "block";
                         fechaParaGuardar = new Date().toLocaleDateString("es-AR");
                         celdaNombre.classList.add("celda-materia-aprobada");
-                    } else if ((nota1 >= 4 && nota2 < 4) || (nota2 >= 4 && nota1 < 4)) { // Una aprobada, una desaprobada
+                    } else if (notasDesaprobadas === 1) { // Una desaprobada
                         textoEstadoColumna = "Recupera";
                         celdaEstado.classList.add("obligatoria");
                         inputNotaFinalManual.style.display = "block";
-                    } else if (nota1 < 4 && nota2 < 4) { // Ambas desaprobadas
+                    } else if (notasDesaprobadas === 2) { // Ambas desaprobadas
                         textoEstadoColumna = "Recursar";
                         celdaEstado.classList.add("obligatoria");
                         inputNotaFinalManual.style.display = "block";
-                    } else { // Suma < 14 pero ambas >= 4
+                    } else { // Suma < 14 pero ambas aprobadas
                          textoEstadoColumna = "Obligatoria";
                          celdaEstado.classList.add("obligatoria");
                          inputNotaFinalManual.style.display = "block";
                     }
                 } else if (notasNumericas.length === 3) {
-                    const nota1 = notasNumericas[0];
-                    const nota2 = notasNumericas[1];
-                    const nota3 = notasNumericas[2];
-                    const suma = nota1 + nota2 + nota3;
+                    const suma = notasNumericas.reduce((sum, current) => sum + current, 0);
 
-                    // Contar cuántas notas son menores a 4
-                    const desaprobadas = notasNumericas.filter(n => n < 4).length;
-
-                    if (suma >= 20 && notasNumericas.every(n => n >= 4)) { // Promociona si la suma es 20 o más Y todas >= 4
+                    if (suma >= 20 && notasAprobadas === 3) { 
                         textoEstadoColumna = "Promocionada";
                         celdaEstado.classList.add("promocionada");
                         promedioCalculado = suma / 3;
@@ -299,29 +293,31 @@ function inicializarTablas() {
                         spanNotaFinalEstatica.style.display = "block";
                         fechaParaGuardar = new Date().toLocaleDateString("es-AR");
                         celdaNombre.classList.add("celda-materia-aprobada");
-                    } else if (desaprobadas === 1) { // Una desaprobada
+                    } else if (notasAprobadas === 2 && notasDesaprobadas === 1) { // 2 aprobadas, 1 desaprobada
+                        textoEstadoColumna = "Obligatoria";
+                        celdaEstado.classList.add("obligatoria");
+                        inputNotaFinalManual.style.display = "block";
+                    } else if (notasDesaprobadas === 1) { // Una desaprobada (esto cubre el caso de 2 aprobadas y 1 desaprobada, si la suma no da 20)
                         textoEstadoColumna = "Recupera";
                         celdaEstado.classList.add("obligatoria");
                         inputNotaFinalManual.style.display = "block";
-                    } else if (desaprobadas >= 2) { // Dos o más desaprobadas
+                    } else if (notasDesaprobadas >= 2) { 
                         textoEstadoColumna = "Recursar";
                         celdaEstado.classList.add("obligatoria");
                         inputNotaFinalManual.style.display = "block";
-                    } else { // Suma < 20 pero todas >= 4
+                    } else { // Caso de notas aprobadas pero no llega al promedio de promoción
                         textoEstadoColumna = "Obligatoria";
                         celdaEstado.classList.add("obligatoria");
                         inputNotaFinalManual.style.display = "block";
                     }
                 }
                 
-                // Si el estado es "Recursar", el texto de la celda de estado es vacío.
                 celdaEstado.textContent = (textoEstadoColumna === "Recursar") ? "" : textoEstadoColumna; 
                 celdaFecha.textContent = fechaParaGuardar; 
 
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                 datosAGuardar.notas = valor;
                 datosAGuardar.estado = textoEstadoColumna;
-                // La nota final se guarda del input manual o del span estático
                 datosAGuardar.notaFinal = (spanNotaFinalEstatica.style.display === "block") ? spanNotaFinalEstatica.textContent : inputNotaFinalManual.value;
                 datosAGuardar.fechaCierre = fechaParaGuardar;
                 localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
@@ -350,10 +346,10 @@ function inicializarTablas() {
                         fechaParaGuardar = new Date().toLocaleDateString("es-AR");
                         celdaNombre.classList.add("celda-materia-aprobada");
                         estadoParaGuardar = "Aprobada"; 
-                        celdaEstado.classList.add("promocionada"); // Usa la clase de color verde
+                        celdaEstado.classList.add("promocionada"); 
                     } else if (notaRedondeada < 4 && notaRedondeada >= 0) {
-                        estadoParaGuardar = "Recursar"; // Vuelve a ser recursar si el final es < 4
-                        celdaEstado.classList.add("obligatoria"); // Usa la clase de color rojo
+                        estadoParaGuardar = "Recursar"; 
+                        celdaEstado.classList.add("obligatoria"); 
                         fechaParaGuardar = ""; 
                     } else { 
                         estadoParaGuardar = ""; 
@@ -364,7 +360,7 @@ function inicializarTablas() {
                     fechaParaGuardar = "";
                 }
                 
-                celdaEstado.textContent = (estadoParaGuardar === "Recursar") ? "" : estadoParaGuardar; // Si es Recursar, el texto es vacío
+                celdaEstado.textContent = (estadoParaGuardar === "Recursar") ? "" : estadoParaGuardar; 
                 celdaFecha.textContent = fechaParaGuardar;
 
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
