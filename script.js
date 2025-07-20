@@ -28,8 +28,8 @@ const materias = [
   { anio: "Cuarto Año", nombre: "Ingeniería de Software II" },
   { anio: "Cuarto Año", nombre: "Sistemas Distribuidos I" },
   { anio: "Quinto Año", nombre: "Taller de Seguridad Informática" },
-  { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
   { anio: "Quinto Año", nombre: "Empresas de Base Tecnológica II" },
+  { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" },
   { anio: "Quinto Año", nombre: "Tesis de Ingeniería Informática o Trabajo Profesional de Ingeniería Informática" }
 ];
 
@@ -46,9 +46,9 @@ materias.forEach(m => {
 
 function aplicarRedondeoUBAXXI(nota) {
     if (isNaN(nota) || nota === null || nota === '') {
-        return NaN; 
+        return NaN;
     }
-    nota = parseFloat(nota); 
+    nota = parseFloat(nota);
 
     if (nota === 3.5) {
         return 3;
@@ -132,7 +132,6 @@ function inicializarTablas() {
             if (datosGuardados) {
                 const datos = JSON.parse(datosGuardados);
                 inputNotasParciales.value = datos.notas || "";
-                celdaEstado.textContent = datos.estado || "";
                 celdaFecha.textContent = datos.fechaCierre || "";
 
                 const notaFinalCargada = parseFloat(datos.notaFinal);
@@ -141,31 +140,35 @@ function inicializarTablas() {
                     inputNotaFinalManual.style.display = "none";
                     spanNotaFinalEstatica.style.display = "block";
                     spanNotaFinalEstatica.textContent = datos.notaFinal || "";
+                    celdaEstado.textContent = "Promocionada";
                     celdaEstado.classList.add("promocionada");
-                } else { 
+                } else if (datos.estado === "Recursar") {
                     inputNotaFinalManual.style.display = "block";
-                    if (datos.estado === "Recursar" && datos.notaFinal) {
-                        inputNotaFinalManual.value = parseFloat(datos.notaFinal).toFixed(1);
-                    } else {
-                        inputNotaFinalManual.value = datos.notaFinal || ""; 
-                    }
+                    inputNotaFinalManual.value = datos.notaFinal || ""; 
                     spanNotaFinalEstatica.style.display = "none";
-                    if (datos.estado === "Obligatoria") {
-                        celdaEstado.classList.add("obligatoria");
-                    } else if (datos.estado === "Recursar" || datos.estado === "Aprobada") { 
-                        celdaEstado.classList.add("obligatoria"); 
-                        if (datos.estado === "Aprobada") {
-                             celdaEstado.classList.remove("obligatoria");
-                             celdaEstado.classList.add("promocionada");
-                        }
-                    }
+                    celdaEstado.textContent = "";
+                    celdaEstado.classList.add("obligatoria");
+                }
+                else if (datos.estado === "Aprobada") {
+                    inputNotaFinalManual.style.display = "block";
+                    inputNotaFinalManual.value = datos.notaFinal || ""; 
+                    spanNotaFinalEstatica.style.display = "none";
+                    celdaEstado.textContent = "Aprobada";
+                    celdaEstado.classList.add("promocionada");
+                }
+                else {
+                    inputNotaFinalManual.style.display = "block";
+                    inputNotaFinalManual.value = datos.notaFinal || ""; 
+                    spanNotaFinalEstatica.style.display = "none";
+                    celdaEstado.textContent = datos.estado || "";
+                    celdaEstado.classList.add("obligatoria");
                 }
                 
                 if (!isNaN(notaFinalCargada) && notaFinalCargada >= 4 && notaFinalCargada <= 10) {
                     celdaNombre.classList.add("celda-materia-aprobada");
                 }
             }
-          
+
             inputNotasParciales.addEventListener("input", () => {
                 const valor = inputNotasParciales.value.trim();
                 let promedioCalculadoSinRedondeo = NaN;
@@ -174,70 +177,54 @@ function inicializarTablas() {
                 let fechaParaGuardar = "";
 
                 celdaNombre.classList.remove("celda-materia-aprobada");
-                celdaEstado.className = "estado-materia"; 
+                celdaEstado.className = "estado-materia";
                 inputNotaFinalManual.value = ""; 
                 spanNotaFinalEstatica.textContent = "";
                 celdaFecha.textContent = ""; 
                 inputNotaFinalManual.style.display = "none"; 
                 spanNotaFinalEstatica.style.display = "none"; 
 
-                const partes = valor.split("-").map(n => parseFloat(n));
+                const partes = valor.split("-").map(n => parseFloat(n)).filter(n => !isNaN(n));
 
                 if (valor === "") {
                     textoEstadoColumna = "";
                     fechaParaGuardar = "";
                     inputNotaFinalManual.style.display = "block"; 
-                } else if (partes.length === 1 && !isNaN(partes[0])) {
-                    promedioCalculadoSinRedondeo = partes[0];
+                } else if (partes.length >= 1 && partes.length <= 3) { // Acepta de 1 a 3 notas
+                    const sumaNotas = partes.reduce((sum, current) => sum + current, 0);
+                    promedioCalculadoSinRedondeo = sumaNotas / partes.length;
                     notaNumericaRedondeada = aplicarRedondeoUBAXXI(promedioCalculadoSinRedondeo);
                     
-                    if (promedioCalculadoSinRedondeo >= 7) { 
+                    // Lógica para Promocionada / Recursar / Obligatoria con el promedio
+                    if (promedioCalculadoSinRedondeo >= 7 && partes.every(n => n >= 4)) { // Promociona con promedio >= 7 y todas las notas >= 4
                         textoEstadoColumna = "Promocionada";
                         celdaEstado.classList.add("promocionada");
                         spanNotaFinalEstatica.textContent = notaNumericaRedondeada.toFixed(0);
                         spanNotaFinalEstatica.style.display = "block"; 
                         fechaParaGuardar = new Date().toLocaleDateString("es-AR");
                         celdaNombre.classList.add("celda-materia-aprobada");
-                    } else { 
-                        textoEstadoColumna = "Obligatoria";
-                        celdaEstado.classList.add("obligatoria");
-                        inputNotaFinalManual.style.display = "block"; 
-                    }
-
-                } else if (partes.length === 2 && partes.every(n => !isNaN(n))) {
-                    const nota1 = partes[0];
-                    const nota2 = partes[1];
-                    const sumaParciales = nota1 + nota2;
-
-                    if (sumaParciales >= 14) { 
-                        textoEstadoColumna = "Promocionada";
-                        celdaEstado.classList.add("promocionada");
-                        promedioCalculadoSinRedondeo = (nota1 + nota2) / 2;
-                        notaNumericaRedondeada = aplicarRedondeoUBAXXI(promedioCalculadoSinRedondeo);
-                        spanNotaFinalEstatica.textContent = notaNumericaRedondeada.toFixed(0);
-                        spanNotaFinalEstatica.style.display = "block"; 
-                        fechaParaGuardar = new Date().toLocaleDateString("es-AR");
-                        celdaNombre.classList.add("celda-materia-aprobada");
-                    } else if (nota1 < 4 && nota2 < 4) { 
+                    } else if (promedioCalculadoSinRedondeo < 4 || partes.some(n => n < 4)) { // Recursar si promedio < 4 o alguna nota < 4
                         textoEstadoColumna = "Recursar";
-                        celdaEstado.classList.add("obligatoria"); 
-                        promedioCalculadoSinRedondeo = (nota1 + nota2) / 2;
+                        celdaEstado.classList.add("obligatoria");
                         inputNotaFinalManual.value = promedioCalculadoSinRedondeo.toFixed(1); 
                         inputNotaFinalManual.style.display = "block"; 
-                        fechaParaGuardar = ""; 
-                    } else { 
+                        fechaParaGuardar = "";
+                    } else { // Obligatoria en cualquier otro caso
                         textoEstadoColumna = "Obligatoria";
                         celdaEstado.classList.add("obligatoria");
                         inputNotaFinalManual.style.display = "block"; 
                     }
+                } else { // Más de 3 notas o formato incorrecto (se asume Obligatoria o se limpia)
+                    textoEstadoColumna = ""; // O podrías poner "Formato Inválido"
+                    inputNotaFinalManual.style.display = "block";
                 }
                 
-                celdaEstado.textContent = textoEstadoColumna;
+                celdaEstado.textContent = (textoEstadoColumna === "Recursar") ? "" : textoEstadoColumna; 
                 celdaFecha.textContent = fechaParaGuardar; 
 
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                 datosAGuardar.notas = valor;
-                datosAGuardar.estado = celdaEstado.textContent;
+                datosAGuardar.estado = textoEstadoColumna;
                 datosAGuardar.notaFinal = (inputNotaFinalManual.style.display === "block") ? inputNotaFinalManual.value : spanNotaFinalEstatica.textContent;
                 datosAGuardar.fechaCierre = fechaParaGuardar;
                 localStorage.setItem(materia.nombre, JSON.stringify(datosAGuardar));
@@ -251,7 +238,7 @@ function inicializarTablas() {
                 let estadoParaGuardar = "";
                 
                 celdaNombre.classList.remove("celda-materia-aprobada");
-                celdaEstado.className = "estado-materia"; 
+                celdaEstado.className = "estado-materia";
 
                 if (!isNaN(notaNumericaManual) && notaManualStr !== '') {
                     const notaRedondeada = aplicarRedondeoUBAXXI(notaNumericaManual);
@@ -276,16 +263,16 @@ function inicializarTablas() {
                         fechaParaGuardar = "";
                     }
                 } else { 
-                    estadoParaGuardar = "";
+                    estadoParaGuardar = ""; 
                     fechaParaGuardar = "";
                 }
                 
-                celdaEstado.textContent = estadoParaGuardar;
+                celdaEstado.textContent = (estadoParaGuardar === "Recursar") ? "" : estadoParaGuardar;
                 celdaFecha.textContent = fechaParaGuardar;
 
                 const datosAGuardar = JSON.parse(localStorage.getItem(materia.nombre)) || {};
                 datosAGuardar.notas = inputNotasParciales.value;
-                datosAGuardar.estado = celdaEstado.textContent; 
+                datosAGuardar.estado = estadoParaGuardar;
                 datosAGuardar.notaFinal = inputNotaFinalManual.value; 
                 datosAGuardar.fechaCierre = fechaParaGuardar;
                 
@@ -308,4 +295,3 @@ function inicializarTablas() {
 }
 
 document.addEventListener("DOMContentLoaded", inicializarTablas);
-
